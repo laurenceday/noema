@@ -17,6 +17,11 @@ Their original copyright and legal notices remain inside each file. They are
 redistributed under the IETF Trust Legal Provisions in force for these 2013
 RFCs, recorded here as `LicenseRef-IETF-TLP-4.0`.
 
+`rfc8259.txt` is the byte-preserved RFC Editor text edition of RFC 8259. Its
+original copyright and legal notices remain inside the file. It is
+redistributed under the IETF Trust Legal Provisions in force for this 2017
+RFC, recorded here as `LicenseRef-IETF-TLP-5.0`.
+
 `rfc-locators.json` contains local provenance descriptions and links. Its
 locator text is not used as evidence for an RFC claim. The file and the local
 formal artefacts are licensed under Apache-2.0.

@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from owlrl import DeductiveClosure, OWLRL_Semantics
+from owlrl import OWLRL_Semantics
 from pyshacl import validate as shacl_validate
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
@@ -50,7 +50,7 @@ from noema.release import build_release, validate_release
 SEMANTIC_PROFILE = "owl2-rl-noema/v1"
 BACKEND_ID = "backend:iana-owl2-rl-fragment"
 DEFAULT_TRUSTED_RELEASE_DIGEST = (
-    "d328dea78ccb03c8dd785c333b8d65978adb06cc46c8f0e4f7170ab210ede76e"
+    "f35adb674b1dc026435f22b03a8a2f4c9ac7d4dbe61978640c7a9c206d919330"
 )
 NODE_HASH_DOMAIN = "noema:iana-owl2-rl-node:v1"
 IANA = "https://noema.invalid/iana/"
@@ -86,6 +86,58 @@ _ALLOWED_PREDICATES = frozenset(
         OWL.targetIndividual,
         *_CUSTOM_PREDICATES,
     }
+)
+_APPROVED_TYPE_OBJECTS = frozenset(
+    URIRef(IANA + local)
+    for local in (
+        "ApplicationMediaType",
+        "MediaType",
+        "NotMediaType",
+        "NotRegisteredApplicationMediaType",
+        "NotRegisteredMediaType",
+        "RegisteredApplicationMediaType",
+        "RegisteredMediaType",
+        "RepresentationSyntax",
+        "StructuredSyntaxSuffix",
+    )
+)
+_APPROVED_SUBCLASS_PAIRS = frozenset(
+    {
+        (
+            URIRef(IANA + "RegisteredApplicationMediaType"),
+            URIRef(IANA + "RegisteredMediaType"),
+        ),
+        (
+            URIRef(IANA + "RegisteredApplicationMediaType"),
+            URIRef(IANA + "ApplicationMediaType"),
+        ),
+        (
+            URIRef(IANA + "RegisteredMediaType"),
+            URIRef(IANA + "MediaType"),
+        ),
+        (
+            URIRef(IANA + "ApplicationMediaType"),
+            URIRef(IANA + "MediaType"),
+        ),
+    }
+)
+_APPROVED_COMPLEMENT_PAIRS = frozenset(
+    {
+        (
+            URIRef(IANA + "NotRegisteredApplicationMediaType"),
+            URIRef(IANA + "RegisteredApplicationMediaType"),
+        ),
+        (
+            URIRef(IANA + "NotRegisteredMediaType"),
+            URIRef(IANA + "RegisteredMediaType"),
+        ),
+        (URIRef(IANA + "NotMediaType"), URIRef(IANA + "MediaType")),
+    }
+)
+_APPROVED_PROPERTY_CHAIN = (
+    URIRef(IANA + "usesRepresentationSyntax"),
+    URIRef(IANA + "hasSuffix"),
+    URIRef(IANA + "suffixSyntax"),
 )
 
 
@@ -132,7 +184,7 @@ def _parse_claim_expression(claim: FormalClaim) -> ClaimExpression:
         raw = load_json_bytes(claim.expression.encode("utf-8"))
     except (CanonicalizationError, UnicodeEncodeError) as exc:
         raise ValueError("claim expression is not canonical JSON") from exc
-    if not isinstance(raw, list) or any(
+    if not isinstance(raw, list) or not raw or any(
         not isinstance(value, str) or not value for value in raw
     ):
         raise ValueError("claim expression must be a non-empty string array")
@@ -219,6 +271,25 @@ class OwlRlFragmentReplayer:
             )
 
         return False
+
+    def validate_node_id(self, node: ProofNode) -> bool:
+        """Bind adapter proof node IDs to their complete semantic payload."""
+        if node.kind is ProofNodeKind.ASSERTION:
+            expected = _node_id("assertion", {"claim_id": node.claim_id})
+        elif node.kind is ProofNodeKind.RULE:
+            if node.rule_id is None:
+                return False
+            expected = _node_id(
+                "rule",
+                {
+                    "claim_id": node.claim_id,
+                    "premise_node_ids": list(node.premise_node_ids),
+                    "rule_id": node.rule_id,
+                },
+            )
+        else:
+            return False
+        return node.id == expected
 
 
 @dataclass(frozen=True, slots=True)
@@ -435,6 +506,7 @@ def _validate_fragment(graph: Graph) -> None:
         OWL.assertionProperty,
         OWL.targetIndividual,
     }
+    negative_components = negative_predicates - {RDF.type}
     for subject, predicate, obj in graph:
         if predicate not in _ALLOWED_PREDICATES:
             raise ValueError("predicate is outside the supported fragment")
@@ -449,11 +521,34 @@ def _validate_fragment(graph: Graph) -> None:
         elif not isinstance(subject, URIRef) or not str(subject).startswith(IANA):
             raise ValueError("subject is outside the release namespace")
 
+        if predicate in {RDF.first, RDF.rest} and not isinstance(subject, BNode):
+            raise ValueError("RDF collection predicate has a non-blank subject")
+        if predicate in negative_components and subject not in negative_nodes:
+            raise ValueError("negative assertion component is outside its node")
+
         if predicate in _LABEL_PREDICATES:
             if not isinstance(obj, Literal) or obj.language is not None:
                 raise ValueError("label must be an untagged string")
             if obj.datatype not in {None, XSD.string}:
                 raise ValueError("label datatype is unsupported")
+        elif predicate == RDF.type:
+            if isinstance(subject, BNode):
+                if obj != OWL.NegativePropertyAssertion:
+                    raise ValueError("negative assertion type is unsupported")
+            elif obj not in _APPROVED_TYPE_OBJECTS:
+                raise ValueError("rdf:type object is outside the supported profile")
+        elif predicate == RDFS.subClassOf:
+            if (subject, obj) not in _APPROVED_SUBCLASS_PAIRS:
+                raise ValueError("subclass axiom is outside the supported profile")
+        elif predicate == OWL.complementOf:
+            if (subject, obj) not in _APPROVED_COMPLEMENT_PAIRS:
+                raise ValueError("class complement is outside the supported profile")
+        elif predicate == OWL.assertionProperty:
+            if obj not in {
+                URIRef(IANA + "hasSuffix"),
+                URIRef(IANA + "usesRepresentationSyntax"),
+            }:
+                raise ValueError("negative assertion property is unsupported")
         elif predicate == RDF.rest:
             if obj != RDF.nil and not isinstance(obj, BNode):
                 raise ValueError("RDF list tail is invalid")
@@ -482,10 +577,17 @@ def _validate_fragment(graph: Graph) -> None:
         values = tuple(Collection(graph, heads[0]))
         if len(values) != 2 or any(not isinstance(value, URIRef) for value in values):
             raise ValueError("only two-property chains are supported")
+        if (subject, *values) != _APPROVED_PROPERTY_CHAIN:
+            raise ValueError("property chain is outside the supported profile")
     for node in list_nodes:
         predicates = set(graph.predicates(node, None))
         if not predicates or not predicates.issubset({RDF.first, RDF.rest}):
             raise ValueError("RDF collection node is malformed")
+        if (
+            len(tuple(graph.objects(node, RDF.first))) != 1
+            or len(tuple(graph.objects(node, RDF.rest))) != 1
+        ):
+            raise ValueError("RDF collection node is incomplete")
     for node in negative_nodes:
         for predicate in negative_predicates:
             if len(tuple(graph.objects(node, predicate))) != 1:
@@ -508,6 +610,22 @@ def _negative_property_in_graph(
     return False
 
 
+def _matching_negative_nodes(
+    graph: Graph,
+    subject: URIRef,
+    predicate: URIRef,
+    obj: URIRef,
+) -> tuple[BNode, ...]:
+    return tuple(
+        node
+        for node in graph.subjects(RDF.type, OWL.NegativePropertyAssertion)
+        if isinstance(node, BNode)
+        and (node, OWL.sourceIndividual, subject) in graph
+        and (node, OWL.assertionProperty, predicate) in graph
+        and (node, OWL.targetIndividual, obj) in graph
+    )
+
+
 def _claim_in_graph(graph: Graph, claim: FormalClaim) -> bool:
     expression = _parse_claim_expression(claim)
     if expression[0] == "triple":
@@ -520,6 +638,66 @@ def _claim_in_graph(graph: Graph, claim: FormalClaim) -> bool:
         if tuple(Collection(graph, head)) == (first, second):
             return True
     return False
+
+
+def _rdf_list_scaffolding(graph: Graph, head: BNode) -> set[tuple[object, ...]]:
+    triples: set[tuple[object, ...]] = set()
+    node: object = head
+    seen: set[BNode] = set()
+    while isinstance(node, BNode):
+        if node in seen:
+            raise ValueError("RDF collection cycle is unsupported")
+        seen.add(node)
+        first = next(iter(graph.objects(node, RDF.first)))
+        rest = next(iter(graph.objects(node, RDF.rest)))
+        triples.add((node, RDF.first, first))
+        triples.add((node, RDF.rest, rest))
+        node = rest
+    if node != RDF.nil:
+        raise ValueError("RDF collection does not terminate at rdf:nil")
+    return triples
+
+
+def _validate_graph_claim_completeness(graph: Graph, release: Release) -> None:
+    """Reject semantic graph material that has no asserted formal claim."""
+    allowed: set[tuple[object, ...]] = {
+        triple for triple in graph if triple[1] in _LABEL_PREDICATES
+    }
+    for claim in release.claims:
+        if not claim.asserted:
+            continue
+        expression = _parse_claim_expression(claim)
+        if expression[0] == "triple":
+            allowed.add(tuple(URIRef(value) for value in expression[1:]))
+            continue
+        if expression[0] == "negative-property":
+            subject, predicate, obj = (URIRef(value) for value in expression[1:])
+            nodes = _matching_negative_nodes(graph, subject, predicate, obj)
+            if not nodes:
+                raise ValueError("asserted negative property claim is absent")
+            for node in nodes:
+                allowed.update(
+                    {
+                        (node, RDF.type, OWL.NegativePropertyAssertion),
+                        (node, OWL.sourceIndividual, subject),
+                        (node, OWL.assertionProperty, predicate),
+                        (node, OWL.targetIndividual, obj),
+                    }
+                )
+            continue
+        super_property, first, second = (
+            URIRef(value) for value in expression[1:]
+        )
+        for head in graph.objects(super_property, OWL.propertyChainAxiom):
+            if isinstance(head, BNode) and tuple(Collection(graph, head)) == (
+                first,
+                second,
+            ):
+                allowed.add((super_property, OWL.propertyChainAxiom, head))
+                allowed.update(_rdf_list_scaffolding(graph, head))
+
+    if set(graph) != allowed:
+        raise ValueError("graph contains undeclared semantic material")
 
 
 def _validate_query_complements(release: Release, graph: Graph) -> None:
@@ -624,21 +802,26 @@ class IanaOwl2RlAdapter:
         return release
 
     def validate(self) -> ValidationReport:
-        errors: list[str] = []
-        digest: str | None = None
-        shacl_conforms = False
-        materialization_checked = False
+        def invalid(
+            error: str,
+            *,
+            release_digest: str | None,
+            shacl_conforms: bool = False,
+            materialization_checked: bool = False,
+        ) -> ValidationReport:
+            return ValidationReport(
+                valid=False,
+                release_digest=release_digest,
+                errors=(error,),
+                shacl_conforms=shacl_conforms,
+                reference_materialization_checked=materialization_checked,
+            )
+
         try:
             release = build_release(self.domain_root / "release.json")
             digest = release.digest
         except (CanonicalizationError, ReleaseValidationError, OSError):
-            return ValidationReport(
-                valid=False,
-                release_digest=None,
-                errors=("release-integrity",),
-                shacl_conforms=False,
-                reference_materialization_checked=False,
-            )
+            return invalid("release-integrity", release_digest=None)
 
         try:
             validate_release(
@@ -647,22 +830,24 @@ class IanaOwl2RlAdapter:
                 expected_digest=self.trusted_release_digest,
             )
         except ReleaseValidationError:
-            errors.append("trusted-release-digest")
+            return invalid("trusted-release-digest", release_digest=digest)
 
-        if self.replayer.supports(release.backend) is not True:
-            errors.append("semantic-assumptions")
+        try:
+            supported = self.replayer.supports(release.backend)
+        except Exception:
+            supported = False
+        if supported is not True:
+            return invalid("semantic-assumptions", release_digest=digest)
 
-        expected: dict[str, str] = {}
         try:
             expected = _validate_mirrors(self.domain_root, release)
         except (CanonicalizationError, OSError, ValueError):
-            errors.append("formal-mirror")
+            return invalid("formal-mirror", release_digest=digest)
 
         try:
             graph = _graph_for_release(self.domain_root)
         except Exception:
-            errors.append("rdf-syntax")
-            graph = Graph()
+            return invalid("rdf-syntax", release_digest=digest)
 
         try:
             _validate_fragment(graph)
@@ -671,8 +856,9 @@ class IanaOwl2RlAdapter:
                 if claim.asserted != present:
                     raise ValueError("claim assertion state differs")
             _validate_query_complements(release, graph)
-        except (ValueError, TypeError):
-            errors.append("owl-fragment")
+            _validate_graph_claim_completeness(graph, release)
+        except Exception:
+            return invalid("owl-fragment", release_digest=digest)
 
         try:
             shape_graph = Graph().parse(
@@ -690,36 +876,42 @@ class IanaOwl2RlAdapter:
             )
             shacl_conforms = conforms is True
             if not shacl_conforms:
-                errors.append("shacl-violation")
+                return invalid("shacl-violation", release_digest=digest)
         except Exception:
-            errors.append("shacl-error")
+            return invalid("shacl-error", release_digest=digest)
 
         reachable = _reachable_claim_ids(release, self.replayer)
         try:
             materialized = Graph()
             for triple in graph:
                 materialized.add(triple)
-            DeductiveClosure(
-                OWLRL_Semantics,
-                axiomatic_triples=False,
-                datatype_axioms=False,
-            ).expand(materialized)
+            reference_semantics = OWLRL_Semantics(
+                materialized,
+                axioms=False,
+                daxioms=False,
+            )
+            reference_semantics.closure()
+            reference_conflict = bool(reference_semantics.error_messages)
             for claim in release.claims:
                 if claim.id in reachable and not claim.asserted:
                     if not _claim_in_graph(materialized, claim):
                         raise ValueError("reference reasoner omitted reachable claim")
-            materialization_checked = True
         except Exception:
-            errors.append("reference-materialization")
+            return invalid(
+                "reference-materialization",
+                release_digest=digest,
+                shacl_conforms=True,
+            )
 
+        errors: list[str] = []
         statuses = {
             query.id: _query_status(query, reachable) for query in release.queries
         }
         if _has_formal_conflict(release, graph, reachable) or any(
             status is JudgementStatus.BOTH for status in statuses.values()
-        ):
+        ) or reference_conflict:
             errors.append("inconsistent-release")
-        if expected and any(
+        if any(
             expected.get(query_id) != status.value
             for query_id, status in statuses.items()
         ):
@@ -730,8 +922,8 @@ class IanaOwl2RlAdapter:
             valid=not unique_errors,
             release_digest=digest,
             errors=unique_errors,
-            shacl_conforms=shacl_conforms,
-            reference_materialization_checked=materialization_checked,
+            shacl_conforms=True,
+            reference_materialization_checked=True,
         )
 
     def decide(self, query_id: str) -> Decision:
@@ -739,15 +931,21 @@ class IanaOwl2RlAdapter:
             raise ValueError("query ID is not a stable identifier")
         report = self.validate()
         if not report.valid:
+            conflict_only = (
+                "inconsistent-release" in report.errors
+                and set(report.errors).issubset(
+                    {"inconsistent-release", "expected-judgement-mismatch"}
+                )
+            )
             reason = (
                 "release:inconsistent"
-                if "inconsistent-release" in report.errors
+                if conflict_only
                 else "release:invalid"
             )
             judgement = Judgement(
                 status=(
                     JudgementStatus.INCONSISTENT_RELEASE
-                    if "inconsistent-release" in report.errors
+                    if conflict_only
                     else JudgementStatus.ERROR
                 ),
                 query_id=query_id,

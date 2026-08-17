@@ -48,6 +48,13 @@ class RuleReplayer(Protocol):
         """Return whether the ordered claims satisfy the pinned rule."""
 
 
+class NodeIdValidator(Protocol):
+    """Optional adapter hook for profile-specific proof node identities."""
+
+    def validate_node_id(self, node: ProofNode) -> bool:
+        """Return whether a node ID commits to that node's semantic payload."""
+
+
 @dataclass(frozen=True, slots=True)
 class ExactGroundReplayer:
     """Synthetic Step 2 semantics: exact ordered grounded applications."""
@@ -155,6 +162,27 @@ def verify_proof(
         raise _fail("rule replayer profile check failed")
     if supported is not True:
         raise _fail("rule replayer does not implement the release semantic profile")
+
+    node_id_lookup_failed = False
+    try:
+        node_id_validator = getattr(semantic_replayer, "validate_node_id", None)
+    except Exception:
+        node_id_lookup_failed = True
+        node_id_validator = None
+    if node_id_lookup_failed:
+        raise _fail("proof node ID validator lookup failed")
+    if node_id_validator is not None:
+        for node in proof.nodes:
+            node_id_validation_failed = False
+            try:
+                node_id_valid = node_id_validator(node)
+            except Exception:
+                node_id_validation_failed = True
+                node_id_valid = False
+            if node_id_validation_failed:
+                raise _fail(f"proof node ID validation failed at {node.id!r}")
+            if node_id_valid is not True:
+                raise _fail(f"proof node ID does not match its payload: {node.id!r}")
 
     visiting: set[str] = set()
     verified: set[str] = set()

@@ -1,0 +1,6 @@
+@prefix iana: <https://noema.invalid/iana/> .
+
+<https://noema.invalid/iana/media/application_rogue>
+    a iana:RegisteredApplicationMediaType,
+        iana:NotMediaType ;
+    iana:mediaTypeName "application/rogue" .

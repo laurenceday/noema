@@ -4,19 +4,20 @@ This release models a small, byte-pinned part of the IANA Media Types and
 Structured Syntax Suffix registries. It covers `application/json`,
 `application/problem+json`, the `+json` suffix, and one deliberately unresolved
 registry candidate. The release digest is
-`d328dea78ccb03c8dd785c333b8d65978adb06cc46c8f0e4f7170ab210ede76e`.
+`f35adb674b1dc026435f22b03a8a2f4c9ac7d4dbe61978640c7a9c206d919330`.
 
-The official `application` registry CSV, structured-suffix CSV, RFC 6838, and
-RFC 6839 are stored under `sources/` with their original bytes. The two small
-JSON views can be checked offline with:
+The official `application` registry CSV, structured-suffix CSV, RFC 6838, RFC
+6839, and RFC 8259 are stored under `sources/` with their original bytes. The
+two small JSON views can be checked offline with:
 
 ```sh
 python3 domains/iana-owl2-rl/sources/extract_iana_slices.py --check
 ```
 
 Claim maps point to half-open byte spans in the raw CSV, RFC, and local Turtle
-files. `rfc-locators.json` is provenance metadata only; its descriptions are
-not used as evidence for RFC claims.
+files. The `application/json` syntax claim jointly requires the registry row
+and RFC 8259's media-type statement. `rfc-locators.json` is provenance
+metadata only; its descriptions are not used as evidence for RFC claims.
 
 ## Implemented semantics
 
@@ -30,7 +31,9 @@ only two grounded OWL 2 RL rule families:
 The release uses open-world semantics, no unique-name assumption, no datatype
 entailment, explicit OWL class complements and negative property assertions,
 and release-fatal formal inconsistency. Query pairs are validated as exact
-class or property complements before reasoning.
+class or property complements before reasoning. Semantic graph triples must
+also have matching asserted formal claims; only label and OWL/RDF collection
+scaffolding are exempt.
 
 The class `RegisteredApplicationMediaType` is the curated intersection-like
 slice for a registered entry in the IANA `application` tree. It is a subclass

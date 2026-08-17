@@ -46,6 +46,12 @@
           "start": 14360,
           "end": 14393,
           "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        },
+        {
+          "source_id": "source:rfc8259",
+          "start": 20218,
+          "end": 20270,
+          "sha256": "e7b197ef8297256ef86c344938c366fdb9e95bd60188fe09a553cfd30f62062e"
         }
       ]
     },
@@ -58,6 +64,30 @@
           "start": 368,
           "end": 426,
           "sha256": "f9bb9cb9a6a61804c40a3235fd2382b6ae94b1f186723b4245948a6962d79523"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-representation-syntax",
+      "support_id": "support:json-representation-syntax",
+      "spans": [
+        {
+          "source_id": "source:rfc8259",
+          "start": 20218,
+          "end": 20270,
+          "sha256": "e7b197ef8297256ef86c344938c366fdb9e95bd60188fe09a553cfd30f62062e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-suffix-structured",
+      "support_id": "support:json-suffix-structured",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
         }
       ]
     },

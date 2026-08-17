@@ -58,6 +58,13 @@
       "sha256": "f754a5e85371359a1b6609427ab9a759dc012af7f656a8741fdac4942abf8c13"
     },
     {
+      "id": "source:rfc8259",
+      "path": "sources/rfc8259.txt",
+      "media_type": "text/plain",
+      "license": "LicenseRef-IETF-TLP-5.0",
+      "sha256": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7"
+    },
+    {
       "id": "source:rfc-locators",
       "path": "sources/rfc-locators.json",
       "media_type": "application/json",
@@ -76,7 +83,7 @@
       "path": "sources/LICENSES.md",
       "media_type": "text/markdown",
       "license": "Apache-2.0",
-      "sha256": "8352cff16603a9ccac2e3b4dfd36247a4f01edf1709081a4924c72f4391f22fd"
+      "sha256": "1a59bede9da72de898e7c0fa39b06c831b20dffdff9872b1b5fa2e98dd57ac17"
     },
     {
       "id": "source:vocabulary",
@@ -104,7 +111,7 @@
       "path": "theory/claims.json",
       "media_type": "application/json",
       "license": "Apache-2.0",
-      "sha256": "a4ed2af9a7d5f85dac3f269fe18dfb1f46bc2f6fc930108d5e99df7e37f243e0"
+      "sha256": "747a780f0e0cbb54012830d20e96661dc65a819b26ab4612abcd06ab0869ff25"
     },
     {
       "id": "source:theory-rules",
@@ -132,7 +139,7 @@
       "path": "theory/claim-maps.json",
       "media_type": "application/json",
       "license": "Apache-2.0",
-      "sha256": "371dc1e4dacf2ca3e6aa5ec959a827df5d6c6d34fa604e4ffe43864900285246"
+      "sha256": "c43d44e381e017609ec3acfa8cc75c1167cc50b237bc0896aeccf4b125925f4d"
     }
   ],
   "claims": [
@@ -175,6 +182,16 @@
       "id": "claim:candidate-registered-application",
       "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_unknown_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
       "asserted": false
+    },
+    {
+      "id": "claim:json-representation-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/syntax/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RepresentationSyntax\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-suffix-structured",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/StructuredSyntaxSuffix\"]",
+      "asserted": true
     },
     {
       "id": "claim:json-suffix-syntax",
@@ -398,6 +415,12 @@
           "start": 14360,
           "end": 14393,
           "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        },
+        {
+          "source_id": "source:rfc8259",
+          "start": 20218,
+          "end": 20270,
+          "sha256": "e7b197ef8297256ef86c344938c366fdb9e95bd60188fe09a553cfd30f62062e"
         }
       ]
     },
@@ -410,6 +433,30 @@
           "start": 368,
           "end": 426,
           "sha256": "f9bb9cb9a6a61804c40a3235fd2382b6ae94b1f186723b4245948a6962d79523"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-representation-syntax",
+      "support_id": "support:json-representation-syntax",
+      "spans": [
+        {
+          "source_id": "source:rfc8259",
+          "start": 20218,
+          "end": 20270,
+          "sha256": "e7b197ef8297256ef86c344938c366fdb9e95bd60188fe09a553cfd30f62062e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-suffix-structured",
+      "support_id": "support:json-suffix-structured",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
         }
       ]
     },

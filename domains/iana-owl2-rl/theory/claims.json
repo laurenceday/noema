@@ -42,6 +42,16 @@
       "asserted": false
     },
     {
+      "id": "claim:json-representation-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/syntax/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RepresentationSyntax\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-suffix-structured",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/StructuredSyntaxSuffix\"]",
+      "asserted": true
+    },
+    {
       "id": "claim:json-suffix-syntax",
       "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"https://noema.invalid/iana/suffixSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
       "asserted": true

@@ -30,6 +30,7 @@ from noema.adapters.iana_owl2_rl import (
 from noema.evidence import project_evidence
 from noema.errors import EvidenceProjectionError, ProofVerificationError
 from noema.model import JudgementStatus
+from noema.proof import verify_proof
 from noema.release import build_release, seal_release
 
 
@@ -83,6 +84,40 @@ def _set_claim_asserted(root: Path, claim_id: str, asserted: bool) -> None:
         if claim["id"] == claim_id:
             claim["asserted"] = asserted
             break
+    _refresh_source(manifest, root, "source:theory-claims")
+    _write_json(root / "release.json", manifest)
+
+
+def _set_claim_expression(root: Path, claim_id: str, expression: str) -> None:
+    claims_path = root / "theory" / "claims.json"
+    claims_doc = _read_json(claims_path)
+    for claim in claims_doc["claims"]:
+        if claim["id"] == claim_id:
+            claim["expression"] = expression
+            break
+    else:
+        raise AssertionError(f"claim not found: {claim_id}")
+    _write_json(claims_path, claims_doc)
+
+    manifest = _read_json(root / "release.json")
+    for claim in manifest["claims"]:
+        if claim["id"] == claim_id:
+            claim["expression"] = expression
+            break
+    _refresh_source(manifest, root, "source:theory-claims")
+    _write_json(root / "release.json", manifest)
+
+
+def _add_claim(root: Path, claim: dict[str, object]) -> None:
+    claims_path = root / "theory" / "claims.json"
+    claims_doc = _read_json(claims_path)
+    claims_doc["claims"].append(claim)
+    claims_doc["claims"].sort(key=lambda item: item["id"])
+    _write_json(claims_path, claims_doc)
+
+    manifest = _read_json(root / "release.json")
+    manifest["claims"].append(claim)
+    manifest["claims"].sort(key=lambda item: item["id"])
     _refresh_source(manifest, root, "source:theory-claims")
     _write_json(root / "release.json", manifest)
 
@@ -166,6 +201,7 @@ class IanaOwlRlAdapterTests(unittest.TestCase):
             ),
             "rfc6838.txt": "b08ccba7e5116e61085f2e1fe447d90eee785fb0efaa448a4b4ef6ea48b03b80",
             "rfc6839.txt": "f754a5e85371359a1b6609427ab9a759dc012af7f656a8741fdac4942abf8c13",
+            "rfc8259.txt": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7",
         }
         for name, digest in expected.items():
             with self.subTest(name=name):
@@ -284,6 +320,30 @@ class IanaOwlRlAdapterTests(unittest.TestCase):
         self.assertEqual(decision.judgement.status, JudgementStatus.ENTAILED)
         self.assertEqual(len(decision.proof.nodes), 1)
 
+    def test_application_json_syntax_projects_joint_registry_and_rfc_evidence(
+        self,
+    ) -> None:
+        decision = self.adapter.decide("query:application-json-uses-json-syntax")
+        packet = project_evidence(
+            self.release,
+            decision.judgement,
+            decision.proof,
+            source_root=DOMAIN,
+            trusted_release_digest=DEFAULT_TRUSTED_RELEASE_DIGEST,
+            replayer=self.adapter.replayer,
+        )
+        self.assertEqual(
+            {item.source_id for item in packet.items},
+            {"source:iana-application-csv", "source:rfc8259"},
+        )
+        rfc_item = next(
+            item for item in packet.items if item.source_id == "source:rfc8259"
+        )
+        self.assertEqual(
+            rfc_item.quote_text,
+            "   The media type for JSON text is application/json.",
+        )
+
     def test_justify_returns_the_same_proof_as_decide(self) -> None:
         decision = self.adapter.decide("query:problem-json-syntax")
         self.assertEqual(
@@ -319,35 +379,173 @@ class IanaOwlRlAdapterTests(unittest.TestCase):
     def test_changed_premise_order_fails_independent_replay(self) -> None:
         decision = self.adapter.decide("query:problem-media-type")
         root_id = decision.proof.root_node_ids[0]
+        root = next(node for node in decision.proof.nodes if node.id == root_id)
+        changed_root = replace(
+            root,
+            premise_node_ids=tuple(reversed(root.premise_node_ids)),
+        )
+        changed_id = adapter_module._node_id(
+            "rule",
+            {
+                "claim_id": changed_root.claim_id,
+                "premise_node_ids": list(changed_root.premise_node_ids),
+                "rule_id": changed_root.rule_id,
+            },
+        )
+        changed_root = replace(changed_root, id=changed_id)
         changed = replace(
             decision.proof,
+            root_node_ids=(changed_id,),
             nodes=tuple(
-                replace(node, premise_node_ids=tuple(reversed(node.premise_node_ids)))
-                if node.id == root_id
-                else node
+                changed_root if node.id == root_id else node
                 for node in decision.proof.nodes
             ),
         )
+        changed_judgement = replace(
+            decision.judgement,
+            proof_root_node_ids=(changed_id,),
+        )
         with self.assertRaisesRegex(ProofVerificationError, "replay rejected"):
-            self.adapter.verify(decision.judgement, changed)
+            self.adapter.verify(changed_judgement, changed)
 
     def test_changed_rule_id_fails_independent_replay(self) -> None:
         decision = self.adapter.decide("query:problem-media-type")
         root_id = decision.proof.root_node_ids[0]
+        root = next(node for node in decision.proof.nodes if node.id == root_id)
+        changed_root = replace(
+            root,
+            rule_id="owlrl:cax-sco:problem-media-via-registration",
+        )
+        changed_id = adapter_module._node_id(
+            "rule",
+            {
+                "claim_id": changed_root.claim_id,
+                "premise_node_ids": list(changed_root.premise_node_ids),
+                "rule_id": changed_root.rule_id,
+            },
+        )
+        changed_root = replace(changed_root, id=changed_id)
         changed = replace(
             decision.proof,
+            root_node_ids=(changed_id,),
             nodes=tuple(
-                replace(
-                    node,
-                    rule_id="owlrl:cax-sco:problem-media-via-registration",
-                )
-                if node.id == root_id
-                else node
+                changed_root if node.id == root_id else node
                 for node in decision.proof.nodes
             ),
         )
+        changed_judgement = replace(
+            decision.judgement,
+            proof_root_node_ids=(changed_id,),
+        )
         with self.assertRaisesRegex(ProofVerificationError, "replay rejected"):
-            self.adapter.verify(decision.judgement, changed)
+            self.adapter.verify(changed_judgement, changed)
+
+    def test_renamed_node_fails_payload_bound_id_validation(self) -> None:
+        decision = self.adapter.decide("query:problem-registered-application")
+        renamed_id = "node:assertion:" + "0" * 32
+        changed = replace(
+            decision.proof,
+            root_node_ids=(renamed_id,),
+            nodes=(replace(decision.proof.nodes[0], id=renamed_id),),
+        )
+        changed_judgement = replace(
+            decision.judgement,
+            proof_root_node_ids=(renamed_id,),
+        )
+        with self.assertRaisesRegex(
+            ProofVerificationError,
+            "does not match its payload",
+        ):
+            self.adapter.verify(changed_judgement, changed)
+
+    def test_raising_node_id_hook_lookup_is_contained_without_canary(self) -> None:
+        class RaisingLookupReplayer:
+            def supports(self, backend: object) -> bool:
+                return True
+
+            def replay(
+                self,
+                rule: object,
+                premises: tuple[object, ...],
+                conclusion: object,
+            ) -> bool:
+                return True
+
+            @property
+            def validate_node_id(self) -> object:
+                raise RuntimeError("NODE-ID-CANARY")
+
+        decision = self.adapter.decide("query:problem-registered-application")
+        with self.assertRaises(ProofVerificationError) as caught:
+            verify_proof(
+                self.release,
+                decision.judgement,
+                decision.proof,
+                trusted_release_digest=DEFAULT_TRUSTED_RELEASE_DIGEST,
+                replayer=RaisingLookupReplayer(),
+            )
+        self.assertEqual(
+            str(caught.exception),
+            "proof node ID validator lookup failed",
+        )
+        self.assertNotIn("CANARY", str(caught.exception))
+        self.assertIsNone(caught.exception.__cause__)
+        self.assertIsNone(caught.exception.__context__)
+
+    def test_alternative_valid_derivation_cannot_reuse_original_root_id(self) -> None:
+        decision = self.adapter.decide("query:problem-media-type")
+        claims = {claim.id: claim for claim in self.release.claims}
+        rules = {rule.id: rule for rule in self.release.rules}
+        leaf = adapter_module._assertion_candidate(
+            claims["claim:problem-registered-application"]
+        )
+        registered_subclass = adapter_module._assertion_candidate(
+            claims["claim:registered-application-subclass-registered"]
+        )
+        registered = adapter_module._rule_candidate(
+            rules["owlrl:cax-sco:problem-registered"],
+            (leaf, registered_subclass),
+        )
+        media_subclass = adapter_module._assertion_candidate(
+            claims["claim:registered-subclass-media"]
+        )
+        alternative = adapter_module._rule_candidate(
+            rules["owlrl:cax-sco:problem-media-via-registration"],
+            (registered, media_subclass),
+        )
+        valid_alternative = replace(
+            decision.proof,
+            root_node_ids=(alternative.root_node_id,),
+            nodes=alternative.nodes,
+        )
+        valid_alternative_judgement = replace(
+            decision.judgement,
+            proof_root_node_ids=(alternative.root_node_id,),
+        )
+        self.adapter.verify(valid_alternative_judgement, valid_alternative)
+        original_root = decision.proof.root_node_ids[0]
+        relabelled_nodes = tuple(
+            replace(node, id=original_root)
+            if node.id == alternative.root_node_id
+            else node
+            for node in alternative.nodes
+        )
+        relabelled = replace(
+            decision.proof,
+            nodes=relabelled_nodes,
+        )
+        with self.assertRaisesRegex(
+            ProofVerificationError,
+            "does not match its payload",
+        ):
+            project_evidence(
+                self.release,
+                decision.judgement,
+                relabelled,
+                source_root=DOMAIN,
+                trusted_release_digest=DEFAULT_TRUSTED_RELEASE_DIGEST,
+                replayer=self.adapter.replayer,
+            )
 
     def test_unmapped_verified_leaf_fails_evidence_projection(self) -> None:
         decision = self.adapter.decide("query:problem-media-type")
@@ -416,6 +614,67 @@ class IanaOwlRlMutationTests(unittest.TestCase):
             )
             report = _signed_adapter(root).validate()
             self.assertIn("owl-fragment", report.errors)
+
+    def test_undeclared_semantic_triple_is_rejected_after_resigning(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._copy(temporary)
+            _append_fixture(
+                root,
+                "assertions.ttl",
+                "rogue-semantic-triple.ttl",
+                "source:assertions",
+            )
+            report = _signed_adapter(root).validate()
+            self.assertEqual(report.errors, ("owl-fragment",))
+
+    def test_rogue_complement_axiom_is_rejected_after_resigning(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._copy(temporary)
+            _append_fixture(
+                root,
+                "vocabulary.ttl",
+                "rogue-complement-axiom.ttl",
+                "source:vocabulary",
+            )
+            report = _signed_adapter(root).validate()
+            self.assertEqual(report.errors, ("owl-fragment",))
+
+    def test_claimed_symmetric_property_profile_escape_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._copy(temporary)
+            _append_fixture(
+                root,
+                "vocabulary.ttl",
+                "symmetric-property-claim.ttl",
+                "source:vocabulary",
+            )
+            _add_claim(
+                root,
+                {
+                    "asserted": True,
+                    "expression": (
+                        '["triple","https://noema.invalid/iana/hasSuffix",'
+                        '"http://www.w3.org/1999/02/22-rdf-syntax-ns#type",'
+                        '"http://www.w3.org/2002/07/owl#SymmetricProperty"]'
+                    ),
+                    "id": "claim:rogue-symmetric-has-suffix",
+                },
+            )
+            report = _signed_adapter(root).validate()
+            self.assertEqual(report.errors, ("owl-fragment",))
+
+    def test_malformed_claim_expressions_return_stable_validation_errors(self) -> None:
+        for expression in ("[]", "not-json"):
+            with self.subTest(expression=expression):
+                with tempfile.TemporaryDirectory() as temporary:
+                    root = self._copy(temporary)
+                    _set_claim_expression(
+                        root,
+                        "claim:candidate-registered-application",
+                        expression,
+                    )
+                    report = _signed_adapter(root).validate()
+                    self.assertEqual(report.errors, ("owl-fragment",))
 
     def test_shacl_violation_is_not_used_as_inference(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -490,6 +749,27 @@ class IanaOwlRlMutationTests(unittest.TestCase):
                 JudgementStatus.INCONSISTENT_RELEASE,
             )
 
+    def test_stale_trust_dominates_a_contradictory_local_release(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._copy(temporary)
+            _append_fixture(
+                root,
+                "assertions.ttl",
+                "inconsistent-class-assertion.ttl",
+                "source:assertions",
+            )
+            _set_claim_asserted(
+                root,
+                "claim:problem-not-registered-application",
+                True,
+            )
+            adapter = IanaOwl2RlAdapter(root, trusted_release_digest="0" * 64)
+            report = adapter.validate()
+            self.assertEqual(report.errors, ("trusted-release-digest",))
+            decision = adapter.decide("query:problem-registered-application")
+            self.assertEqual(decision.judgement.status, JudgementStatus.ERROR)
+            self.assertEqual(decision.judgement.reason_code, "release:invalid")
+
     def test_positive_and_negative_property_conflict_is_release_fatal(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = self._copy(temporary)
@@ -504,6 +784,82 @@ class IanaOwlRlMutationTests(unittest.TestCase):
                 "claim:application-json-has-json-suffix",
                 True,
             )
+            report = _signed_adapter(root).validate()
+            self.assertIn("inconsistent-release", report.errors)
+
+    def test_ungrounded_derived_class_conflict_is_release_fatal(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._copy(temporary)
+            _append_fixture(
+                root,
+                "assertions.ttl",
+                "ungrounded-class-conflict.ttl",
+                "source:assertions",
+            )
+            for claim in (
+                {
+                    "asserted": True,
+                    "expression": (
+                        '["triple","https://noema.invalid/iana/media/'
+                        'application_rogue",'
+                        '"http://www.w3.org/1999/02/22-rdf-syntax-ns#type",'
+                        '"https://noema.invalid/iana/RegisteredApplicationMediaType"]'
+                    ),
+                    "id": "claim:rogue-registered-application",
+                },
+                {
+                    "asserted": True,
+                    "expression": (
+                        '["triple","https://noema.invalid/iana/media/'
+                        'application_rogue",'
+                        '"http://www.w3.org/1999/02/22-rdf-syntax-ns#type",'
+                        '"https://noema.invalid/iana/NotMediaType"]'
+                    ),
+                    "id": "claim:rogue-not-media-type",
+                },
+            ):
+                _add_claim(root, claim)
+            adapter = _signed_adapter(root)
+            report = adapter.validate()
+            self.assertIn("inconsistent-release", report.errors)
+            decision = adapter.decide("query:problem-registered-application")
+            self.assertEqual(
+                decision.judgement.status,
+                JudgementStatus.INCONSISTENT_RELEASE,
+            )
+
+    def test_ungrounded_property_chain_conflict_is_release_fatal(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self._copy(temporary)
+            _append_fixture(
+                root,
+                "assertions.ttl",
+                "ungrounded-property-conflict.ttl",
+                "source:assertions",
+            )
+            for claim in (
+                {
+                    "asserted": True,
+                    "expression": (
+                        '["triple","https://noema.invalid/iana/media/'
+                        'application_rogue",'
+                        '"https://noema.invalid/iana/hasSuffix",'
+                        '"https://noema.invalid/iana/suffix/json"]'
+                    ),
+                    "id": "claim:rogue-has-json-suffix",
+                },
+                {
+                    "asserted": True,
+                    "expression": (
+                        '["negative-property",'
+                        '"https://noema.invalid/iana/media/application_rogue",'
+                        '"https://noema.invalid/iana/usesRepresentationSyntax",'
+                        '"https://noema.invalid/iana/syntax/json"]'
+                    ),
+                    "id": "claim:rogue-not-json-syntax",
+                },
+            ):
+                _add_claim(root, claim)
             report = _signed_adapter(root).validate()
             self.assertIn("inconsistent-release", report.errors)
 
