@@ -130,6 +130,8 @@ def verify_proof(
             raise _fail(f"proof node {node.id!r} has an invalid rule ID")
         if any(not valid_identifier(value) for value in node.premise_node_ids):
             raise _fail(f"proof node {node.id!r} has an invalid premise node ID")
+        if len(node.premise_node_ids) != len(set(node.premise_node_ids)):
+            raise _fail(f"proof node {node.id!r} repeats a premise node")
         node_by_id[node.id] = node
 
     if len(set(proof.root_node_ids)) != len(proof.root_node_ids):
@@ -143,11 +145,15 @@ def verify_proof(
     claim_by_id = {claim.id: claim for claim in release.claims}
     rule_by_id = {rule.id: rule for rule in release.rules}
     semantic_replayer = replayer or ExactGroundReplayer()
+    profile_check_failed = False
     try:
         supported = semantic_replayer.supports(release.backend)
-    except Exception as exc:
-        raise _fail(f"rule replayer profile check failed: {exc}") from exc
-    if not supported:
+    except Exception:
+        profile_check_failed = True
+        supported = False
+    if profile_check_failed:
+        raise _fail("rule replayer profile check failed")
+    if supported is not True:
         raise _fail("rule replayer does not implement the release semantic profile")
 
     visiting: set[str] = set()
@@ -190,11 +196,15 @@ def verify_proof(
                 claim_by_id[node_by_id[premise_id].claim_id]
                 for premise_id in node.premise_node_ids
             )
+            replay_failed = False
             try:
                 accepted = semantic_replayer.replay(rule, premises, claim)
-            except Exception as exc:
-                raise _fail(f"rule replayer failed at node {node.id!r}: {exc}") from exc
-            if not accepted:
+            except Exception:
+                replay_failed = True
+                accepted = False
+            if replay_failed:
+                raise _fail(f"rule replayer failed at node {node.id!r}")
+            if accepted is not True:
                 raise _fail(f"rule replay rejected node {node.id!r}")
             applied_rules.add(rule.id)
         else:
@@ -211,6 +221,27 @@ def verify_proof(
     root_claims = tuple(node_by_id[root].claim_id for root in proof.root_node_ids)
     if root_claims != judgement.conclusion_claim_ids:
         raise _fail("proof root conclusions do not match the judgement")
+    query_by_id = {query.id: query for query in release.queries}
+    query = query_by_id.get(judgement.query_id)
+    if query is None:
+        raise _fail("judgement query is not declared by the release")
+    if judgement.status is JudgementStatus.ENTAILED:
+        expected_query_claims = (query.positive_claim_id,)
+    elif judgement.status is JudgementStatus.CONTRADICTED:
+        if query.complement_claim_id is None:
+            raise _fail("query does not declare a formal complement")
+        expected_query_claims = (query.complement_claim_id,)
+    elif judgement.status is JudgementStatus.BOTH:
+        if query.complement_claim_id is None:
+            raise _fail("query does not declare a formal complement")
+        expected_query_claims = (
+            query.positive_claim_id,
+            query.complement_claim_id,
+        )
+    else:
+        raise _fail("proof verification requires a proof-bearing judgement")
+    if root_claims != expected_query_claims:
+        raise _fail("proof conclusions do not answer the declared query")
 
     return VerificationResult(
         proof_digest=proof_digest(proof),

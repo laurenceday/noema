@@ -26,7 +26,7 @@ from noema.release import build_release, seal_release, validate_release
 
 FIXTURE = Path(__file__).parent / "fixtures" / "kernel"
 MANIFEST = FIXTURE / "release-manifest.json"
-EXPECTED_DIGEST = "2fbe89eca2d3ccebd356cba8126c8c6ac43b82fcd1d77afa75a03eb0fd1026f2"
+EXPECTED_DIGEST = "89c1c08b5d75cd32882360fe3d67f62f9d7a397d334eb0fb06b46e85b39e3492"
 
 
 class ReleaseBuildTests(unittest.TestCase):
@@ -42,7 +42,7 @@ class ReleaseBuildTests(unittest.TestCase):
             shutil.copytree(FIXTURE, root)
             manifest_path = root / "release-manifest.json"
             manifest = json.loads(manifest_path.read_text())
-            for key in ("sources", "claims", "rules", "claim_maps"):
+            for key in ("sources", "claims", "rules", "queries", "claim_maps"):
                 manifest[key].reverse()
             manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
             self.assertEqual(build_release(manifest_path).digest, EXPECTED_DIGEST)
@@ -178,6 +178,39 @@ class ReleaseBuildTests(unittest.TestCase):
                 source_root=FIXTURE,
             )
 
+    def test_dangling_query_claim_is_rejected(self) -> None:
+        release = build_release(MANIFEST)
+        changed_query = replace(
+            release.queries[0], positive_claim_id="claim:not-in-release"
+        )
+        with self.assertRaisesRegex(ReleaseValidationError, "dangling positive"):
+            seal_release(
+                replace(release, queries=(changed_query, *release.queries[1:])),
+                source_root=FIXTURE,
+            )
+
+    def test_query_signature_mutation_misses_trusted_digest(self) -> None:
+        release = build_release(MANIFEST)
+        changed_query = replace(release.queries[0], id="query:changed")
+        changed = seal_release(
+            replace(release, queries=(changed_query, *release.queries[1:])),
+            source_root=FIXTURE,
+        )
+        with self.assertRaisesRegex(ReleaseValidationError, "trusted"):
+            validate_release(changed, expected_digest=release.digest)
+
+    def test_semantic_assumption_mutation_misses_trusted_digest(self) -> None:
+        release = build_release(MANIFEST)
+        changed = seal_release(
+            replace(
+                release,
+                backend=replace(release.backend, world_assumption="closed"),
+            ),
+            source_root=FIXTURE,
+        )
+        with self.assertRaisesRegex(ReleaseValidationError, "trusted"):
+            validate_release(changed, expected_digest=release.digest)
+
 
 class CanonicalJsonTests(unittest.TestCase):
     def test_object_key_order_is_canonical(self) -> None:
@@ -194,6 +227,15 @@ class CanonicalJsonTests(unittest.TestCase):
     def test_unpaired_unicode_surrogate_is_rejected(self) -> None:
         with self.assertRaisesRegex(CanonicalizationError, "Unicode"):
             canonical_bytes({"value": "\ud800"})
+
+    def test_deep_json_fails_with_a_canonicalization_error(self) -> None:
+        deeply_nested = b"[" * 2_000 + b"]" * 2_000
+        with self.assertRaises(CanonicalizationError):
+            load_json_bytes(deeply_nested)
+
+    def test_utf8_bom_is_rejected(self) -> None:
+        with self.assertRaisesRegex(CanonicalizationError, "without a BOM"):
+            load_json_bytes(b"\xef\xbb\xbf{}")
 
 
 class JudgementContractTests(unittest.TestCase):

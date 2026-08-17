@@ -13,6 +13,8 @@ from noema.errors import CanonicalizationError
 
 JSONScalar: TypeAlias = None | bool | int | str
 JSONValue: TypeAlias = JSONScalar | list["JSONValue"] | dict[str, "JSONValue"]
+MAX_JSON_BYTES = 16 * 1024 * 1024
+MAX_JSON_DEPTH = 128
 
 
 def _reject_constant(value: str) -> None:
@@ -32,6 +34,10 @@ def _object_without_duplicate_keys(
 
 def load_json_bytes(data: bytes) -> JSONValue:
     """Parse UTF-8 JSON while rejecting duplicate keys and non-finite numbers."""
+    if len(data) > MAX_JSON_BYTES:
+        raise CanonicalizationError("JSON input exceeds the 16 MiB limit")
+    if data.startswith((b"\xef\xbb\xbf", b"\xff\xfe", b"\xfe\xff")):
+        raise CanonicalizationError("JSON input must be UTF-8 without a BOM")
     try:
         value = json.loads(
             data,
@@ -40,7 +46,7 @@ def load_json_bytes(data: bytes) -> JSONValue:
         )
     except CanonicalizationError:
         raise
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
         raise CanonicalizationError(f"invalid UTF-8 JSON: {exc}") from exc
     validate_json_value(value)
     return value
@@ -55,8 +61,12 @@ def load_json_file(path: Path) -> JSONValue:
     return load_json_bytes(data)
 
 
-def validate_json_value(value: object, path: str = "$") -> None:
+def validate_json_value(value: object, path: str = "$", depth: int = 0) -> None:
     """Validate the integer-only JSON subset used by release artefacts."""
+    if depth > MAX_JSON_DEPTH:
+        raise CanonicalizationError(
+            f"canonical JSON exceeds the depth limit at {path}"
+        )
     if value is None or isinstance(value, bool):
         return
     if isinstance(value, str):
@@ -77,11 +87,11 @@ def validate_json_value(value: object, path: str = "$") -> None:
                 key.encode("utf-8")
             except UnicodeEncodeError as exc:
                 raise CanonicalizationError(f"invalid Unicode key at {path}") from exc
-            validate_json_value(child, f"{path}.{key}")
+            validate_json_value(child, f"{path}.{key}", depth + 1)
         return
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         for index, child in enumerate(value):
-            validate_json_value(child, f"{path}[{index}]")
+            validate_json_value(child, f"{path}[{index}]", depth + 1)
         return
     raise CanonicalizationError(
         f"unsupported canonical JSON value {type(value).__name__} at {path}"
@@ -99,9 +109,12 @@ def canonical_bytes(value: JSONValue) -> bytes:
             separators=(",", ":"),
             sort_keys=True,
         )
-    except (TypeError, ValueError) as exc:
+    except (TypeError, ValueError, RecursionError) as exc:
         raise CanonicalizationError(f"cannot encode canonical JSON: {exc}") from exc
-    return encoded.encode("utf-8")
+    result = encoded.encode("utf-8")
+    if len(result) > MAX_JSON_BYTES:
+        raise CanonicalizationError("canonical JSON exceeds the 16 MiB limit")
+    return result
 
 
 def digest_bytes(data: bytes) -> str:

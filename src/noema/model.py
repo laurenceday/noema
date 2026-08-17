@@ -27,16 +27,28 @@ class BackendDeclaration:
     id: str
     version: str
     semantic_profile: str
+    world_assumption: str
+    unique_name_assumption: bool
+    negation: str
+    monotonic: bool
+    datatype_policy: str
+    inconsistency_policy: str
     max_proof_nodes: int
     max_proof_depth: int
 
     def to_dict(self) -> dict[str, JSONValue]:
         return {
             "id": self.id,
+            "inconsistency_policy": self.inconsistency_policy,
             "max_proof_depth": self.max_proof_depth,
             "max_proof_nodes": self.max_proof_nodes,
+            "monotonic": self.monotonic,
+            "negation": self.negation,
             "semantic_profile": self.semantic_profile,
+            "datatype_policy": self.datatype_policy,
+            "unique_name_assumption": self.unique_name_assumption,
             "version": self.version,
+            "world_assumption": self.world_assumption,
         }
 
 
@@ -91,6 +103,22 @@ class GroundRule:
 
 
 @dataclass(frozen=True, slots=True)
+class QuerySpec:
+    """A release-pinned query and its formal positive and complement claims."""
+
+    id: str
+    positive_claim_id: str
+    complement_claim_id: str | None = None
+
+    def to_dict(self) -> dict[str, JSONValue]:
+        return {
+            "complement_claim_id": self.complement_claim_id,
+            "id": self.id,
+            "positive_claim_id": self.positive_claim_id,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class SourceSpan:
     """A half-open byte range in a pinned source."""
 
@@ -132,6 +160,7 @@ class Release:
     sources: tuple[SourceRecord, ...]
     claims: tuple[FormalClaim, ...]
     rules: tuple[GroundRule, ...]
+    queries: tuple[QuerySpec, ...]
     claim_maps: tuple[ClaimSupport, ...]
     digest: str
 
@@ -141,6 +170,7 @@ class Release:
             "claim_maps": [mapping.to_dict() for mapping in self.claim_maps],
             "claims": [claim.to_dict() for claim in self.claims],
             "format_version": self.format_version,
+            "queries": [query.to_dict() for query in self.queries],
             "release_id": self.release_id,
             "rules": [rule.to_dict() for rule in self.rules],
             "sources": [source.to_dict() for source in self.sources],

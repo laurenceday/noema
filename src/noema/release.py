@@ -13,6 +13,7 @@ from noema.model import (
     ClaimSupport,
     FormalClaim,
     GroundRule,
+    QuerySpec,
     Release,
     SourceRecord,
     SourceSpan,
@@ -111,6 +112,7 @@ def _normalise(release: Release) -> Release:
         sources=tuple(sorted(release.sources, key=lambda value: value.id)),
         claims=tuple(sorted(release.claims, key=lambda value: value.id)),
         rules=tuple(sorted(release.rules, key=lambda value: value.id)),
+        queries=tuple(sorted(release.queries, key=lambda value: value.id)),
         claim_maps=tuple(
             sorted(
                 (
@@ -159,6 +161,19 @@ def _validate_structure(release: Release, source_root: Path | None) -> None:
         or not release.backend.semantic_profile
     ):
         raise _fail("backend version and semantic profile must be non-empty")
+    if release.backend.world_assumption not in {"open", "closed"}:
+        raise _fail("backend.world_assumption must be open or closed")
+    if not isinstance(release.backend.unique_name_assumption, bool):
+        raise _fail("backend.unique_name_assumption must be Boolean")
+    if not isinstance(release.backend.monotonic, bool):
+        raise _fail("backend.monotonic must be Boolean")
+    for field_name, value in (
+        ("negation", release.backend.negation),
+        ("datatype_policy", release.backend.datatype_policy),
+        ("inconsistency_policy", release.backend.inconsistency_policy),
+    ):
+        if not isinstance(value, str) or not value:
+            raise _fail(f"backend.{field_name} must be a non-empty string")
     if (
         isinstance(release.backend.max_proof_nodes, bool)
         or not isinstance(release.backend.max_proof_nodes, int)
@@ -181,10 +196,12 @@ def _validate_structure(release: Release, source_root: Path | None) -> None:
     source_ids = [source.id for source in release.sources]
     claim_ids = [claim.id for claim in release.claims]
     rule_ids = [rule.id for rule in release.rules]
+    query_ids = [query.id for query in release.queries]
     support_ids = [mapping.support_id for mapping in release.claim_maps]
     _assert_unique(source_ids, "source")
     _assert_unique(claim_ids, "claim")
     _assert_unique(rule_ids, "rule")
+    _assert_unique(query_ids, "query")
     _assert_unique(support_ids, "support")
 
     source_by_id = {source.id: source for source in release.sources}
@@ -244,6 +261,19 @@ def _validate_structure(release: Release, source_root: Path | None) -> None:
             raise _fail(f"ground rule {rule.id!r} has an invalid conclusion ID")
         if rule.conclusion_claim_id not in claim_by_id:
             raise _fail(f"ground rule {rule.id!r} has a dangling conclusion")
+
+    if not release.queries:
+        raise _fail("release must declare at least one supported query")
+    for query in release.queries:
+        if not valid_identifier(query.id):
+            raise _fail("query ID is invalid")
+        if query.positive_claim_id not in claim_by_id:
+            raise _fail(f"query {query.id!r} has a dangling positive claim")
+        if query.complement_claim_id is not None:
+            if query.complement_claim_id not in claim_by_id:
+                raise _fail(f"query {query.id!r} has a dangling complement claim")
+            if query.complement_claim_id == query.positive_claim_id:
+                raise _fail(f"query {query.id!r} repeats its positive as complement")
 
     for mapping in release.claim_maps:
         if not valid_identifier(mapping.support_id):
@@ -327,6 +357,7 @@ def build_release(manifest_path: Path) -> Release:
             "claim_maps",
             "claims",
             "format_version",
+            "queries",
             "release_id",
             "rules",
             "sources",
@@ -338,11 +369,17 @@ def build_release(manifest_path: Path) -> Release:
     backend_raw = _object(
         root["backend"],
         {
+            "datatype_policy",
             "id",
+            "inconsistency_policy",
             "max_proof_depth",
             "max_proof_nodes",
+            "monotonic",
+            "negation",
             "semantic_profile",
+            "unique_name_assumption",
             "version",
+            "world_assumption",
         },
         "backend",
     )
@@ -351,6 +388,22 @@ def build_release(manifest_path: Path) -> Release:
         version=_string(backend_raw["version"], "backend.version"),
         semantic_profile=_string(
             backend_raw["semantic_profile"], "backend.semantic_profile"
+        ),
+        world_assumption=_string(
+            backend_raw["world_assumption"], "backend.world_assumption"
+        ),
+        unique_name_assumption=_boolean(
+            backend_raw["unique_name_assumption"],
+            "backend.unique_name_assumption",
+        ),
+        negation=_string(backend_raw["negation"], "backend.negation"),
+        monotonic=_boolean(backend_raw["monotonic"], "backend.monotonic"),
+        datatype_policy=_string(
+            backend_raw["datatype_policy"], "backend.datatype_policy"
+        ),
+        inconsistency_policy=_string(
+            backend_raw["inconsistency_policy"],
+            "backend.inconsistency_policy",
         ),
         max_proof_nodes=_integer(
             backend_raw["max_proof_nodes"], "backend.max_proof_nodes"
@@ -421,6 +474,31 @@ def build_release(manifest_path: Path) -> Release:
             )
         )
 
+    queries: list[QuerySpec] = []
+    for index, value in enumerate(_array(root["queries"], "queries")):
+        location = f"queries[{index}]"
+        item = _object(
+            value,
+            {"complement_claim_id", "id", "positive_claim_id"},
+            location,
+        )
+        complement_raw = item["complement_claim_id"]
+        if complement_raw is not None and not isinstance(complement_raw, str):
+            raise _fail(f"{location}.complement_claim_id must be a string or null")
+        queries.append(
+            QuerySpec(
+                id=_identifier(item["id"], f"{location}.id"),
+                positive_claim_id=_identifier(
+                    item["positive_claim_id"], f"{location}.positive_claim_id"
+                ),
+                complement_claim_id=(
+                    _identifier(complement_raw, f"{location}.complement_claim_id")
+                    if complement_raw is not None
+                    else None
+                ),
+            )
+        )
+
     claim_maps: list[ClaimSupport] = []
     for index, value in enumerate(_array(root["claim_maps"], "claim_maps")):
         location = f"claim_maps[{index}]"
@@ -473,6 +551,7 @@ def build_release(manifest_path: Path) -> Release:
         sources=tuple(sources),
         claims=tuple(claims),
         rules=tuple(rules),
+        queries=tuple(queries),
         claim_maps=tuple(claim_maps),
         digest="",
     )

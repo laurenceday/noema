@@ -5,6 +5,12 @@
     "id": "backend:synthetic",
     "version": "1.0.0",
     "semantic_profile": "exact-ground/v1",
+    "world_assumption": "open",
+    "unique_name_assumption": false,
+    "negation": "explicit-complement",
+    "monotonic": true,
+    "datatype_policy": "none",
+    "inconsistency_policy": "reject-release",
     "max_proof_nodes": 16,
     "max_proof_depth": 8
   },
@@ -39,6 +45,11 @@
       "asserted": false
     },
     {
+      "id": "claim:not-serializable",
+      "expression": "not(serializableAsJson(application/problem+json))",
+      "asserted": false
+    },
+    {
       "id": "claim:hostile-source",
       "expression": "sourceContainsHostileText(source:fixture)",
       "asserted": true
@@ -54,6 +65,18 @@
       "id": "rule:json-serializable",
       "premises": ["claim:json-syntax"],
       "conclusion": "claim:serializable"
+    }
+  ],
+  "queries": [
+    {
+      "id": "query:serializable",
+      "positive_claim_id": "claim:serializable",
+      "complement_claim_id": "claim:not-serializable"
+    },
+    {
+      "id": "query:hostile-source",
+      "positive_claim_id": "claim:hostile-source",
+      "complement_claim_id": null
     }
   ],
   "claim_maps": [

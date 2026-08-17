@@ -86,6 +86,16 @@ class ProofReplayTests(unittest.TestCase):
         with self.assertRaisesRegex(ProofVerificationError, "trusted release"):
             self.verify(judgement=changed)
 
+    def test_changed_query_id_fails_release_binding(self) -> None:
+        changed = replace(self.judgement, query_id="query:not-declared")
+        with self.assertRaisesRegex(ProofVerificationError, "not declared"):
+            self.verify(judgement=changed)
+
+    def test_contradicted_status_requires_the_formal_complement(self) -> None:
+        changed = replace(self.judgement, status=JudgementStatus.CONTRADICTED)
+        with self.assertRaisesRegex(ProofVerificationError, "declared query"):
+            self.verify(judgement=changed)
+
     def test_changed_conclusion_fails_rule_replay(self) -> None:
         proof = replace_node(
             self.proof,
@@ -123,6 +133,15 @@ class ProofReplayTests(unittest.TestCase):
             premise_node_ids=("node:suffix", "node:registered"),
         )
         with self.assertRaisesRegex(ProofVerificationError, "replay rejected"):
+            self.verify(proof)
+
+    def test_duplicate_premise_node_fails_closed(self) -> None:
+        proof = replace_node(
+            self.proof,
+            "node:json-syntax",
+            premise_node_ids=("node:registered", "node:registered"),
+        )
+        with self.assertRaisesRegex(ProofVerificationError, "repeats a premise"):
             self.verify(proof)
 
     def test_changed_rule_id_fails_rule_replay(self) -> None:
@@ -224,6 +243,60 @@ class ProofReplayTests(unittest.TestCase):
                 proof,
                 trusted_release_digest=release.digest,
             )
+
+    def test_truthy_non_boolean_profile_result_fails_closed(self) -> None:
+        class TruthyProfileReplayer:
+            def supports(self, backend):
+                return "yes"
+
+            def replay(self, rule, premises, conclusion):
+                return True
+
+        with self.assertRaisesRegex(ProofVerificationError, "semantic profile"):
+            verify_proof(
+                self.release,
+                self.judgement,
+                self.proof,
+                trusted_release_digest=self.release.digest,
+                replayer=TruthyProfileReplayer(),
+            )
+
+    def test_truthy_non_boolean_replay_result_fails_closed(self) -> None:
+        class TruthyReplayReplayer:
+            def supports(self, backend):
+                return True
+
+            def replay(self, rule, premises, conclusion):
+                return "yes"
+
+        with self.assertRaisesRegex(ProofVerificationError, "replay rejected"):
+            verify_proof(
+                self.release,
+                self.judgement,
+                self.proof,
+                trusted_release_digest=self.release.digest,
+                replayer=TruthyReplayReplayer(),
+            )
+
+    def test_replayer_exception_text_is_not_retained(self) -> None:
+        class FailingReplayer:
+            def supports(self, backend):
+                raise RuntimeError("PRIVATE-RUNTIME-CANARY")
+
+            def replay(self, rule, premises, conclusion):
+                return False
+
+        with self.assertRaises(ProofVerificationError) as caught:
+            verify_proof(
+                self.release,
+                self.judgement,
+                self.proof,
+                trusted_release_digest=self.release.digest,
+                replayer=FailingReplayer(),
+            )
+        self.assertNotIn("PRIVATE-RUNTIME-CANARY", str(caught.exception))
+        self.assertIsNone(caught.exception.__cause__)
+        self.assertIsNone(caught.exception.__context__)
 
     def test_proofless_judgement_rejects_attached_proof(self) -> None:
         judgement = Judgement(

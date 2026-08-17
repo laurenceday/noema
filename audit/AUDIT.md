@@ -19,3 +19,26 @@ Checks performed:
 | -- | -- | -- | No findings | closed |
 
 Leads not pursued: source ingestion, proof replay, resource budgets, and hostile corpus handling are not present in the scaffold. They remain audit targets for the steps that add them.
+
+## Step 2, round 1 -- 2026-08-17
+
+This round reviewed the release, proof, and evidence kernel at `404b8954a2afa0b3eaf78fc4c6f77580a835c8d6`. The Solidity suite remains waived. The review covered the full Step 2 diff, strict parsing, release hashing, query and semantic bindings, adapter return values, proof replay, exact source projection, resource limits, hostile text, and error privacy.
+
+Checks performed:
+
+- Ran all 57 pre-fix tests through locked, offline uv.
+- Ran pip-audit 2.10.1 over the eight locked third-party packages; it reported no known vulnerabilities.
+- Compiled `src/` and `tests/` and searched production code for network, shell, dynamic evaluation, and unsafe deserialisation paths. None are present.
+- Replayed query-transplant, truthy-adapter, exception-canary, and deeply nested JSON cases against the public API.
+- Checked release, judgement, and proof schemas against their runtime parsers.
+- Re-ran the mutation suite after each correction.
+
+| id | severity | file | finding | resolution |
+| --- | --- | --- | --- | --- |
+| N-201 | high | `src/noema/proof.py`, `src/noema/release.py` | A valid proof could be relabelled with an undeclared query ID, and `contradicted` was not tied to a release-declared formal complement. | Added digest-bound query specifications with positive and complement claims; proof replay now requires the roots to answer that specification. |
+| N-202 | medium | `src/noema/proof.py` | Adapter `supports` and `replay` results used truthiness, so strings such as `"false"` were accepted. | Require the exact Boolean value `True`; every other value fails closed. |
+| N-203 | medium | `src/noema/proof.py` | Adapter exception text and exception context crossed the verifier boundary and could retain private or hostile data. | Replace adapter failures with fixed messages outside the exception context; regression tests check the message, cause, and context. |
+| N-204 | medium | `src/noema/canonical.py` | Deep JSON escaped as a raw `RecursionError`, and the canonical input profile had no byte or nesting limit. | Added a 16 MiB limit, a depth limit of 128, explicit BOM rejection, and canonical errors for recursive input. |
+| N-205 | medium | `src/noema/model.py`, `src/noema/release.py` | The release digest bound only an opaque semantic-profile string, not the open/closed-world, unique-name, negation, monotonicity, datatype, or inconsistency assumptions. | Added structured, mandatory semantic declarations to the backend contract and release schema; assumption changes now miss the trusted digest. |
+
+All five findings were corrected on the stacked audit branch. Round 2 must verify the fixes and the expanded suite before closure.
