@@ -1,0 +1,27 @@
+[build-system]
+requires = ["uv_build==0.12.5"]
+build-backend = "uv_build"
+
+[project]
+name = "noema"
+version = "0.1.0"
+description = "A proof-carrying KRR release system"
+readme = "README.md"
+requires-python = "==3.14.6"
+license = "Apache-2.0"
+authors = [{ name = "Noema contributors" }]
+dependencies = [
+  "owlrl==7.6.2",
+  "pyshacl==0.40.1",
+  "rdflib==7.6.0",
+]
+
+[project.scripts]
+noema = "noema.cli:main"
+
+[tool.noema.toolchain]
+python = "3.14.6"
+uv = "0.12.5"
+rdflib = "7.6.0"
+owlrl = "7.6.2"
+pyshacl = "0.40.1"
