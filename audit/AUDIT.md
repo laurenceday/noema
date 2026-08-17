@@ -82,3 +82,25 @@ The implementation already contained the corrections found during its pre-receip
 | -- | -- | -- | No findings | closed |
 
 Leads not pursued: full OWL 2 RL conformance, automatic live-registry refresh, and independent authentication of SME modelling choices are outside the declared prototype. The adapter rejects unadvertised OWL constructs and uses only its pinned, offline release.
+
+## Step 4, round 1 -- 2026-08-17
+
+The recorded Solidity security suite remains waived. This round reviewed the full `bf92cb788582b2e2c69f1cf5a65df1a1b9e7ec62...27f6e8c1810fe62b4a4ca28c1bf9349547e235b4` diff. The review covered deterministic question mapping, compound answers, proofless and proof-bearing verification, evidence and rendering integrity, trust direction, transient-question privacy, Null-prime simulation, CLI handling, and the offline demo.
+
+Checks performed:
+
+- Ran all 158 tests with locked, offline uv and with the runbook command inside the activated environment; both runs passed. Ran the 46 Step 4 mapping, answer, probe, and CLI tests separately during an independent KRR review.
+- Ran `scripts/demo` through build, ask, verify, and probe. The conjunctive answer carried two independently replayed proofs and evidence packets; the verifier reproduced the fixed answer digest.
+- Rebuilt the two IANA slices from pinned parent bytes, compiled `src/` and `tests/`, checked the complete Step 4 diff, ran `git fsck`, and confirmed the implementation commit signature and provenance trailers.
+- Ran pip-audit 2.10.1 over the locked third-party packages; it reported no known vulnerabilities. The editable local package was the only skipped entry.
+- Exercised changed rendering, evidence, release digests, proof nodes, result order, answer checksum, and extension fields. Each forged certificate failed after recomputing its outer checksum.
+- Confirmed proofless unknown answers are rerun rather than accepted by shape, proof-bearing answers replay and re-project exact evidence, and the answer-provided digest never becomes a trust anchor.
+- Sent unsupported input and forged certificates containing a private canary through stdin and error paths. The canary appeared in neither certificate, stdout, nor stderr.
+- Ran every Step 4 CLI path with socket creation and DNS disabled. Searched production code for network clients, subprocesses, shell execution, dynamic evaluation, unsafe deserialisation, and credential material; no such production path or credential was found.
+- Confirmed `questions.json` and `evals.json` are byte-pinned release sources. Null-prime mutates only an in-memory theory, rejects the old proof under the hypothetical digest, and verifies the manifest and every pinned source are unchanged afterward.
+
+| id | severity | file | finding | status |
+| --- | --- | --- | --- | --- |
+| -- | -- | -- | No findings | closed |
+
+The round closes cleanly. Verification deliberately does not attest the transient sentence a user typed because neither that sentence nor its hash is retained. It attests the pinned public mapping and the resulting formal query plan, as documented in both README files.
