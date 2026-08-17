@@ -1,0 +1,56 @@
+{
+  "schema": "noema.owl2-rl-ground-rules/v1",
+  "supported_rule_families": [
+    {
+      "id": "owlrl:cax-sco",
+      "meaning": "RDF type propagation over one rdfs:subClassOf axiom"
+    },
+    {
+      "id": "owlrl:prp-spo2",
+      "meaning": "A two-property owl:propertyChainAxiom"
+    }
+  ],
+  "ground_rules": [
+    {
+      "id": "owlrl:cax-sco:problem-application",
+      "premises": [
+        "claim:problem-registered-application",
+        "claim:registered-application-subclass-application"
+      ],
+      "conclusion": "claim:problem-application-media-type"
+    },
+    {
+      "id": "owlrl:cax-sco:problem-media-via-application",
+      "premises": [
+        "claim:problem-application-media-type",
+        "claim:application-subclass-media"
+      ],
+      "conclusion": "claim:problem-media-type"
+    },
+    {
+      "id": "owlrl:cax-sco:problem-media-via-registration",
+      "premises": [
+        "claim:problem-registered",
+        "claim:registered-subclass-media"
+      ],
+      "conclusion": "claim:problem-media-type"
+    },
+    {
+      "id": "owlrl:cax-sco:problem-registered",
+      "premises": [
+        "claim:problem-registered-application",
+        "claim:registered-application-subclass-registered"
+      ],
+      "conclusion": "claim:problem-registered"
+    },
+    {
+      "id": "owlrl:prp-spo2:problem-json-syntax",
+      "premises": [
+        "claim:problem-has-json-suffix",
+        "claim:json-suffix-syntax",
+        "claim:syntax-property-chain"
+      ],
+      "conclusion": "claim:problem-uses-json-syntax"
+    }
+  ]
+}

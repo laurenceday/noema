@@ -1,0 +1,120 @@
+{
+  "format_version": 1,
+  "release_id": "release:kernel-fixture",
+  "backend": {
+    "id": "backend:synthetic",
+    "version": "1.0.0",
+    "semantic_profile": "exact-ground/v1",
+    "world_assumption": "open",
+    "unique_name_assumption": false,
+    "negation": "explicit-complement",
+    "monotonic": true,
+    "datatype_policy": "none",
+    "inconsistency_policy": "reject-release",
+    "max_proof_nodes": 16,
+    "max_proof_depth": 8
+  },
+  "sources": [
+    {
+      "id": "source:fixture",
+      "path": "source.txt",
+      "media_type": "text/plain",
+      "license": "CC0-1.0",
+      "sha256": "ea882aff4999f544a370cfa0b504ee73da6436d29175b9816c1d8b0c2129fe22"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim:registered",
+      "expression": "registered(application/problem+json)",
+      "asserted": true
+    },
+    {
+      "id": "claim:suffix",
+      "expression": "hasSuffix(application/problem+json,+json)",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-syntax",
+      "expression": "usesRepresentationSyntax(application/problem+json,json)",
+      "asserted": false
+    },
+    {
+      "id": "claim:serializable",
+      "expression": "serializableAsJson(application/problem+json)",
+      "asserted": false
+    },
+    {
+      "id": "claim:not-serializable",
+      "expression": "not(serializableAsJson(application/problem+json))",
+      "asserted": false
+    },
+    {
+      "id": "claim:hostile-source",
+      "expression": "sourceContainsHostileText(source:fixture)",
+      "asserted": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule:suffix-syntax",
+      "premises": ["claim:registered", "claim:suffix"],
+      "conclusion": "claim:json-syntax"
+    },
+    {
+      "id": "rule:json-serializable",
+      "premises": ["claim:json-syntax"],
+      "conclusion": "claim:serializable"
+    }
+  ],
+  "queries": [
+    {
+      "id": "query:serializable",
+      "positive_claim_id": "claim:serializable",
+      "complement_claim_id": "claim:not-serializable"
+    },
+    {
+      "id": "query:hostile-source",
+      "positive_claim_id": "claim:hostile-source",
+      "complement_claim_id": null
+    }
+  ],
+  "claim_maps": [
+    {
+      "claim_id": "claim:registered",
+      "support_id": "support:registered",
+      "spans": [
+        {
+          "source_id": "source:fixture",
+          "start": 0,
+          "end": 36,
+          "sha256": "987851233665a9f64f1d18fe736cef8275bc3630100bce0912ac8bab0b5a2440"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:suffix",
+      "support_id": "support:suffix",
+      "spans": [
+        {
+          "source_id": "source:fixture",
+          "start": 37,
+          "end": 78,
+          "sha256": "b66aae4de807fcf6742c43dd414233a539b86307a713b3116b575552dc9d0454"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:hostile-source",
+      "support_id": "support:hostile",
+      "spans": [
+        {
+          "source_id": "source:fixture",
+          "start": 79,
+          "end": 120,
+          "sha256": "d13e18d0357958c102263c5cb255a26d84867e45775dcd697d56a72bf6aa4455"
+        }
+      ]
+    }
+  ]
+}

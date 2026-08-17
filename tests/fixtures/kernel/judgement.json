@@ -1,0 +1,8 @@
+{
+  "status": "entailed",
+  "query_id": "query:serializable",
+  "release_digest": "89c1c08b5d75cd32882360fe3d67f62f9d7a397d334eb0fb06b46e85b39e3492",
+  "conclusion_claim_ids": ["claim:serializable"],
+  "proof_root_node_ids": ["node:serializable"],
+  "reason_code": null
+}

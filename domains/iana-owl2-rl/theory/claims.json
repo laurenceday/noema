@@ -1,0 +1,145 @@
+{
+  "schema": "noema.formal-claims/v1",
+  "claims": [
+    {
+      "id": "claim:application-json-has-json-suffix",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffix/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:application-json-lacks-json-suffix",
+      "expression": "[\"negative-property\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffix/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:application-json-not-json-syntax",
+      "expression": "[\"negative-property\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:application-json-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:application-json-uses-json-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:application-subclass-media",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/ApplicationMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:candidate-not-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_unknown_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotRegisteredApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:candidate-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_unknown_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:json-representation-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/syntax/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RepresentationSyntax\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-suffix-structured",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/StructuredSyntaxSuffix\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-suffix-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"https://noema.invalid/iana/suffixSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:not-media-complement",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/NotMediaType\",\"http://www.w3.org/2002/07/owl#complementOf\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:not-registered-application-complement",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/NotRegisteredApplicationMediaType\",\"http://www.w3.org/2002/07/owl#complementOf\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:not-registered-complement",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/NotRegisteredMediaType\",\"http://www.w3.org/2002/07/owl#complementOf\",\"https://noema.invalid/iana/RegisteredMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:problem-application-media-type",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/ApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-has-json-suffix",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffix/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:problem-media-type",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-json-syntax",
+      "expression": "[\"negative-property\",\"https://noema.invalid/iana/media/application_problem_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-media-type",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-registered",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotRegisteredMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotRegisteredApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-registered",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:problem-uses-json-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:registered-application-subclass-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/ApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:registered-application-subclass-registered",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/RegisteredMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:registered-subclass-media",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/RegisteredMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:syntax-property-chain",
+      "expression": "[\"property-chain\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffixSyntax\"]",
+      "asserted": true
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "noema.formal-queries/v1",
+  "queries": [
+    {
+      "id": "query:application-json-has-json-suffix",
+      "positive_claim_id": "claim:application-json-has-json-suffix",
+      "complement_claim_id": "claim:application-json-lacks-json-suffix"
+    },
+    {
+      "id": "query:application-json-uses-json-syntax",
+      "positive_claim_id": "claim:application-json-uses-json-syntax",
+      "complement_claim_id": "claim:application-json-not-json-syntax"
+    },
+    {
+      "id": "query:candidate-registered-application",
+      "positive_claim_id": "claim:candidate-registered-application",
+      "complement_claim_id": "claim:candidate-not-registered-application"
+    },
+    {
+      "id": "query:problem-json-syntax",
+      "positive_claim_id": "claim:problem-uses-json-syntax",
+      "complement_claim_id": "claim:problem-not-json-syntax"
+    },
+    {
+      "id": "query:problem-media-type",
+      "positive_claim_id": "claim:problem-media-type",
+      "complement_claim_id": "claim:problem-not-media-type"
+    },
+    {
+      "id": "query:problem-registered",
+      "positive_claim_id": "claim:problem-registered",
+      "complement_claim_id": "claim:problem-not-registered"
+    },
+    {
+      "id": "query:problem-registered-application",
+      "positive_claim_id": "claim:problem-registered-application",
+      "complement_claim_id": "claim:problem-not-registered-application"
+    },
+    {
+      "id": "query:problem-unregistered",
+      "positive_claim_id": "claim:problem-not-registered",
+      "complement_claim_id": "claim:problem-registered"
+    }
+  ]
+}

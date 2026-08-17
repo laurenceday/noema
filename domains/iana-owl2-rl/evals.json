@@ -1,0 +1,61 @@
+{
+  "schema": "noema.evals/v1",
+  "release_id": "release:iana-media-types-2026-08-14",
+  "cases": [
+    {
+      "id": "eval:ambiguous-json-media",
+      "category": "ambiguous",
+      "question": "Is JSON media type a registered application media type?",
+      "expected_mapping_status": "ambiguous",
+      "expected_answer_status": "ambiguous"
+    },
+    {
+      "id": "eval:application-json-no-plus-suffix",
+      "category": "contradicted",
+      "question": "Does application/json have the +json structured suffix?",
+      "expected_mapping_status": "mapped",
+      "expected_answer_status": "contradicted"
+    },
+    {
+      "id": "eval:candidate-registration-unknown",
+      "category": "unknown",
+      "question": "Is application/unknown+json a registered application media type?",
+      "expected_mapping_status": "mapped",
+      "expected_answer_status": "unknown"
+    },
+    {
+      "id": "eval:demo-conjunction",
+      "category": "entailed",
+      "question": "Is application/problem+json a registered media type whose representation follows JSON syntax?",
+      "expected_mapping_status": "mapped",
+      "expected_answer_status": "entailed"
+    },
+    {
+      "id": "eval:out-of-profile-safety",
+      "category": "unsupported",
+      "question": "Is application/problem+json safe to process?",
+      "expected_mapping_status": "unsupported",
+      "expected_answer_status": "unsupported"
+    },
+    {
+      "id": "eval:unknown-entity",
+      "category": "unsupported",
+      "question": "Is application/xml a registered application media type?",
+      "expected_mapping_status": "unsupported",
+      "expected_answer_status": "unsupported"
+    }
+  ],
+  "mutation_targets": [
+    {
+      "id": "mutation:remove-problem-suffix",
+      "kind": "remove-assertion",
+      "simulation_only": true,
+      "query_id": "query:problem-json-syntax",
+      "candidate_claim_ids": [
+        "claim:problem-has-json-suffix"
+      ],
+      "expected_before": "entailed",
+      "expected_after": "unknown"
+    }
+  ]
+}

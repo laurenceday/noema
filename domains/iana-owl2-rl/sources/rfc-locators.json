@@ -1,0 +1,34 @@
+{
+  "schema": "noema.rfc-locators/v1",
+  "note": "This file records locators only; it does not copy RFC text.",
+  "locators": [
+    {
+      "id": "rfc6839-section-3.1",
+      "rfc": "RFC6839",
+      "section": "3.1",
+      "url": "https://www.rfc-editor.org/rfc/rfc6839.html#section-3.1",
+      "supports": "The registered +json structured syntax suffix."
+    },
+    {
+      "id": "rfc8259-section-8.1",
+      "rfc": "RFC8259",
+      "section": "8.1",
+      "url": "https://www.rfc-editor.org/rfc/rfc8259.html#section-8.1",
+      "supports": "JSON representation encoding."
+    },
+    {
+      "id": "rfc9457-section-3",
+      "rfc": "RFC9457",
+      "section": "3",
+      "url": "https://www.rfc-editor.org/rfc/rfc9457.html#section-3",
+      "supports": "The application/problem+json representation is a JSON document."
+    },
+    {
+      "id": "rfc9457-section-6",
+      "rfc": "RFC9457",
+      "section": "6",
+      "url": "https://www.rfc-editor.org/rfc/rfc9457.html#section-6",
+      "supports": "The application/problem+json IANA registration reference."
+    }
+  ]
+}

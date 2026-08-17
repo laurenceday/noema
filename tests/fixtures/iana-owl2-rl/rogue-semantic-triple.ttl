@@ -1,0 +1,4 @@
+@prefix iana: <https://noema.invalid/iana/> .
+
+<https://noema.invalid/iana/media/application_rogue>
+    iana:hasSuffix <https://noema.invalid/iana/suffix/json> .

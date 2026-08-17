@@ -1,0 +1,29 @@
+@prefix iana: <https://noema.invalid/iana/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+iana:RegisteredApplicationMediaTypeShape
+    a sh:NodeShape ;
+    sh:targetClass iana:RegisteredApplicationMediaType ;
+    sh:property [
+        sh:path iana:mediaTypeName ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string
+    ] .
+
+iana:StructuredSyntaxSuffixShape
+    a sh:NodeShape ;
+    sh:targetClass iana:StructuredSyntaxSuffix ;
+    sh:property [
+        sh:path iana:suffixName ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string
+    ] ;
+    sh:property [
+        sh:path iana:suffixSyntax ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI
+    ] .

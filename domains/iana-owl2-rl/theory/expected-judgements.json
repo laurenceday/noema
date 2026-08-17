@@ -1,0 +1,37 @@
+{
+  "schema": "noema.expected-judgements/v1",
+  "judgements": [
+    {
+      "query_id": "query:application-json-has-json-suffix",
+      "status": "contradicted"
+    },
+    {
+      "query_id": "query:application-json-uses-json-syntax",
+      "status": "entailed"
+    },
+    {
+      "query_id": "query:candidate-registered-application",
+      "status": "unknown"
+    },
+    {
+      "query_id": "query:problem-json-syntax",
+      "status": "entailed"
+    },
+    {
+      "query_id": "query:problem-media-type",
+      "status": "entailed"
+    },
+    {
+      "query_id": "query:problem-registered",
+      "status": "entailed"
+    },
+    {
+      "query_id": "query:problem-registered-application",
+      "status": "entailed"
+    },
+    {
+      "query_id": "query:problem-unregistered",
+      "status": "contradicted"
+    }
+  ]
+}

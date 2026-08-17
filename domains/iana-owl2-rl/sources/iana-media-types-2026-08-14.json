@@ -1,0 +1,35 @@
+{
+  "schema": "noema.iana.media-types.slice/v1",
+  "generated_from": {
+    "path": "iana-application-2026-08-14.csv",
+    "url": "https://www.iana.org/assignments/media-types/application.csv",
+    "registry_id": "media-types/application",
+    "registry_updated": "2026-08-14",
+    "retrieved_at": "2026-08-17",
+    "sha256": "e8ac01c61f0741fe0b7dcfc96c1276390c41410f66588adf8bb1a450398031b0",
+    "selectors": [
+      "application/json",
+      "application/problem+json"
+    ]
+  },
+  "license": {
+    "id": "CC0-1.0",
+    "url": "https://www.iana.org/help/licensing-terms"
+  },
+  "records": [
+    {
+      "name": "json",
+      "template": "application/json",
+      "references": [
+        "RFC8259"
+      ]
+    },
+    {
+      "name": "problem+json",
+      "template": "application/problem+json",
+      "references": [
+        "RFC9457"
+      ]
+    }
+  ]
+}

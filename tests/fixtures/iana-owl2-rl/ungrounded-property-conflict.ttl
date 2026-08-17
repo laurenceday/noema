@@ -1,0 +1,11 @@
+@prefix iana: <https://noema.invalid/iana/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<https://noema.invalid/iana/media/application_rogue>
+    iana:hasSuffix <https://noema.invalid/iana/suffix/json> .
+
+[]
+    a owl:NegativePropertyAssertion ;
+    owl:sourceIndividual <https://noema.invalid/iana/media/application_rogue> ;
+    owl:assertionProperty iana:usesRepresentationSyntax ;
+    owl:targetIndividual <https://noema.invalid/iana/syntax/json> .

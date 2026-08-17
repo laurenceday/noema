@@ -1,0 +1,628 @@
+{
+  "format_version": 1,
+  "release_id": "release:iana-media-types-2026-08-14",
+  "backend": {
+    "id": "backend:iana-owl2-rl-fragment",
+    "version": "1.0.0",
+    "semantic_profile": "owl2-rl-noema/v1",
+    "world_assumption": "open",
+    "unique_name_assumption": false,
+    "negation": "explicit-complement",
+    "monotonic": true,
+    "datatype_policy": "rdf-1.1-literals-no-entailment/v1",
+    "inconsistency_policy": "reject-release/v1",
+    "max_proof_nodes": 64,
+    "max_proof_depth": 16
+  },
+  "sources": [
+    {
+      "id": "source:evals",
+      "path": "evals.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "983668fa6349e0823fd491342650adbd840cfffa75996c6d2d3f729ca64cc0c8"
+    },
+    {
+      "id": "source:iana-application-csv",
+      "path": "sources/iana-application-2026-08-14.csv",
+      "media_type": "text/csv",
+      "license": "CC0-1.0",
+      "sha256": "e8ac01c61f0741fe0b7dcfc96c1276390c41410f66588adf8bb1a450398031b0"
+    },
+    {
+      "id": "source:iana-suffix-csv",
+      "path": "sources/iana-structured-syntax-suffix-2026-06-25.csv",
+      "media_type": "text/csv",
+      "license": "CC0-1.0",
+      "sha256": "8f67c993b42ca7027dbcf108d831a8b38d38485c941efd72c8099585420547bf"
+    },
+    {
+      "id": "source:iana-media-types-slice",
+      "path": "sources/iana-media-types-2026-08-14.json",
+      "media_type": "application/json",
+      "license": "CC0-1.0",
+      "sha256": "261864c0a30d8ecc71203351b6097e942d186a22cf0457c6d36fd5bea5e9cff1"
+    },
+    {
+      "id": "source:iana-suffix-slice",
+      "path": "sources/iana-structured-suffix-2026-06-25.json",
+      "media_type": "application/json",
+      "license": "CC0-1.0",
+      "sha256": "6fc7502bda3fd3196f7da3cde63a0d60e611fdc6e915ade40bb9ff53efc5dae5"
+    },
+    {
+      "id": "source:questions",
+      "path": "questions.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "cf8eaeb32a2c0ff7bc5c00fa0e408ebca23607c29439c19e8f4f750c4f2d4f10"
+    },
+    {
+      "id": "source:rfc6838",
+      "path": "sources/rfc6838.txt",
+      "media_type": "text/plain",
+      "license": "LicenseRef-IETF-TLP-4.0",
+      "sha256": "b08ccba7e5116e61085f2e1fe447d90eee785fb0efaa448a4b4ef6ea48b03b80"
+    },
+    {
+      "id": "source:rfc6839",
+      "path": "sources/rfc6839.txt",
+      "media_type": "text/plain",
+      "license": "LicenseRef-IETF-TLP-4.0",
+      "sha256": "f754a5e85371359a1b6609427ab9a759dc012af7f656a8741fdac4942abf8c13"
+    },
+    {
+      "id": "source:rfc8259",
+      "path": "sources/rfc8259.txt",
+      "media_type": "text/plain",
+      "license": "LicenseRef-IETF-TLP-5.0",
+      "sha256": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7"
+    },
+    {
+      "id": "source:rfc-locators",
+      "path": "sources/rfc-locators.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "b5d5b59dd9dbb2837a1ac7e5080466992d6a4c6688473948ae78cdacf28407c0"
+    },
+    {
+      "id": "source:iana-slice-extractor",
+      "path": "sources/extract_iana_slices.py",
+      "media_type": "text/x-python",
+      "license": "Apache-2.0",
+      "sha256": "f362c180de44eb41a1f24b8f29e823d0f52ee3519d7d229bf2d6144851356888"
+    },
+    {
+      "id": "source:licence-metadata",
+      "path": "sources/LICENSES.md",
+      "media_type": "text/markdown",
+      "license": "Apache-2.0",
+      "sha256": "1a59bede9da72de898e7c0fa39b06c831b20dffdff9872b1b5fa2e98dd57ac17"
+    },
+    {
+      "id": "source:vocabulary",
+      "path": "theory/vocabulary.ttl",
+      "media_type": "text/turtle",
+      "license": "Apache-2.0",
+      "sha256": "6bd70a1a0f2158e0833be60a08908598a4b38bdad24c8ec91eda2060963a3d34"
+    },
+    {
+      "id": "source:assertions",
+      "path": "theory/assertions.ttl",
+      "media_type": "text/turtle",
+      "license": "Apache-2.0",
+      "sha256": "5a1c2ca6f64d033c404ac5eed69710bbef74b7ef263ba6d0229b44f6697ca278"
+    },
+    {
+      "id": "source:shapes",
+      "path": "theory/shapes.ttl",
+      "media_type": "text/turtle",
+      "license": "Apache-2.0",
+      "sha256": "7249bfb47816625e979018289428f56a380a2b0baa5c3815a9edabe0088e5eca"
+    },
+    {
+      "id": "source:theory-claims",
+      "path": "theory/claims.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "747a780f0e0cbb54012830d20e96661dc65a819b26ab4612abcd06ab0869ff25"
+    },
+    {
+      "id": "source:theory-rules",
+      "path": "theory/rules.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "eb360d092c3397e283ffd3f9a0e1f7e1ac4018032859b5c70e850a23f56a3c47"
+    },
+    {
+      "id": "source:theory-queries",
+      "path": "theory/queries.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "0cc6cc6fbaee50fd2aa770709848876bf321d5472805841a92e44c4adae11e8c"
+    },
+    {
+      "id": "source:expected-judgements",
+      "path": "theory/expected-judgements.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "affdeb0cf7c0f5b371313d6fbadd1087d5dfebb2b15d265ce9fe16008c8035ad"
+    },
+    {
+      "id": "source:claim-maps",
+      "path": "theory/claim-maps.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "c43d44e381e017609ec3acfa8cc75c1167cc50b237bc0896aeccf4b125925f4d"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim:application-json-has-json-suffix",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffix/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:application-json-lacks-json-suffix",
+      "expression": "[\"negative-property\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffix/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:application-json-not-json-syntax",
+      "expression": "[\"negative-property\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:application-json-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:application-json-uses-json-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:application-subclass-media",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/ApplicationMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:candidate-not-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_unknown_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotRegisteredApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:candidate-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_unknown_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:json-representation-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/syntax/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RepresentationSyntax\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-suffix-structured",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/StructuredSyntaxSuffix\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:json-suffix-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/suffix/json\",\"https://noema.invalid/iana/suffixSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:not-media-complement",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/NotMediaType\",\"http://www.w3.org/2002/07/owl#complementOf\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:not-registered-application-complement",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/NotRegisteredApplicationMediaType\",\"http://www.w3.org/2002/07/owl#complementOf\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:not-registered-complement",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/NotRegisteredMediaType\",\"http://www.w3.org/2002/07/owl#complementOf\",\"https://noema.invalid/iana/RegisteredMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:problem-application-media-type",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/ApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-has-json-suffix",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffix/json\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:problem-media-type",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-json-syntax",
+      "expression": "[\"negative-property\",\"https://noema.invalid/iana/media/application_problem_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-media-type",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-registered",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotRegisteredMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-not-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/NotRegisteredApplicationMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-registered",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredMediaType\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:problem-registered-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:problem-uses-json-syntax",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/media/application_problem_json\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/syntax/json\"]",
+      "asserted": false
+    },
+    {
+      "id": "claim:registered-application-subclass-application",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/ApplicationMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:registered-application-subclass-registered",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/RegisteredApplicationMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/RegisteredMediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:registered-subclass-media",
+      "expression": "[\"triple\",\"https://noema.invalid/iana/RegisteredMediaType\",\"http://www.w3.org/2000/01/rdf-schema#subClassOf\",\"https://noema.invalid/iana/MediaType\"]",
+      "asserted": true
+    },
+    {
+      "id": "claim:syntax-property-chain",
+      "expression": "[\"property-chain\",\"https://noema.invalid/iana/usesRepresentationSyntax\",\"https://noema.invalid/iana/hasSuffix\",\"https://noema.invalid/iana/suffixSyntax\"]",
+      "asserted": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "owlrl:cax-sco:problem-application",
+      "premises": [
+        "claim:problem-registered-application",
+        "claim:registered-application-subclass-application"
+      ],
+      "conclusion": "claim:problem-application-media-type"
+    },
+    {
+      "id": "owlrl:cax-sco:problem-media-via-application",
+      "premises": [
+        "claim:problem-application-media-type",
+        "claim:application-subclass-media"
+      ],
+      "conclusion": "claim:problem-media-type"
+    },
+    {
+      "id": "owlrl:cax-sco:problem-media-via-registration",
+      "premises": [
+        "claim:problem-registered",
+        "claim:registered-subclass-media"
+      ],
+      "conclusion": "claim:problem-media-type"
+    },
+    {
+      "id": "owlrl:cax-sco:problem-registered",
+      "premises": [
+        "claim:problem-registered-application",
+        "claim:registered-application-subclass-registered"
+      ],
+      "conclusion": "claim:problem-registered"
+    },
+    {
+      "id": "owlrl:prp-spo2:problem-json-syntax",
+      "premises": [
+        "claim:problem-has-json-suffix",
+        "claim:json-suffix-syntax",
+        "claim:syntax-property-chain"
+      ],
+      "conclusion": "claim:problem-uses-json-syntax"
+    }
+  ],
+  "queries": [
+    {
+      "id": "query:application-json-has-json-suffix",
+      "positive_claim_id": "claim:application-json-has-json-suffix",
+      "complement_claim_id": "claim:application-json-lacks-json-suffix"
+    },
+    {
+      "id": "query:application-json-uses-json-syntax",
+      "positive_claim_id": "claim:application-json-uses-json-syntax",
+      "complement_claim_id": "claim:application-json-not-json-syntax"
+    },
+    {
+      "id": "query:candidate-registered-application",
+      "positive_claim_id": "claim:candidate-registered-application",
+      "complement_claim_id": "claim:candidate-not-registered-application"
+    },
+    {
+      "id": "query:problem-json-syntax",
+      "positive_claim_id": "claim:problem-uses-json-syntax",
+      "complement_claim_id": "claim:problem-not-json-syntax"
+    },
+    {
+      "id": "query:problem-media-type",
+      "positive_claim_id": "claim:problem-media-type",
+      "complement_claim_id": "claim:problem-not-media-type"
+    },
+    {
+      "id": "query:problem-registered",
+      "positive_claim_id": "claim:problem-registered",
+      "complement_claim_id": "claim:problem-not-registered"
+    },
+    {
+      "id": "query:problem-registered-application",
+      "positive_claim_id": "claim:problem-registered-application",
+      "complement_claim_id": "claim:problem-not-registered-application"
+    },
+    {
+      "id": "query:problem-unregistered",
+      "positive_claim_id": "claim:problem-not-registered",
+      "complement_claim_id": "claim:problem-registered"
+    }
+  ],
+  "claim_maps": [
+    {
+      "claim_id": "claim:application-json-lacks-json-suffix",
+      "support_id": "support:application-json-lacks-json-suffix",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 14360,
+          "end": 14393,
+          "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        },
+        {
+          "source_id": "source:rfc6838",
+          "start": 19577,
+          "end": 19717,
+          "sha256": "4e17f45e63f9d743e6db79ed3aac3d5ad5cf40e04686b3018708224bc5a9e7e9"
+        },
+        {
+          "source_id": "source:rfc6838",
+          "start": 20519,
+          "end": 20690,
+          "sha256": "bd96a0b7ec847aa501d816c1380941f929710d1bfb51dfeaae97cbcbfef55b3e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:application-json-registered-application",
+      "support_id": "support:application-json-registered-application",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 14360,
+          "end": 14393,
+          "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:application-json-uses-json-syntax",
+      "support_id": "support:application-json-uses-json-syntax",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 14360,
+          "end": 14393,
+          "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        },
+        {
+          "source_id": "source:rfc8259",
+          "start": 20218,
+          "end": 20270,
+          "sha256": "e7b197ef8297256ef86c344938c366fdb9e95bd60188fe09a553cfd30f62062e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:application-subclass-media",
+      "support_id": "support:application-subclass-media",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 368,
+          "end": 426,
+          "sha256": "f9bb9cb9a6a61804c40a3235fd2382b6ae94b1f186723b4245948a6962d79523"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-representation-syntax",
+      "support_id": "support:json-representation-syntax",
+      "spans": [
+        {
+          "source_id": "source:rfc8259",
+          "start": 20218,
+          "end": 20270,
+          "sha256": "e7b197ef8297256ef86c344938c366fdb9e95bd60188fe09a553cfd30f62062e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-suffix-structured",
+      "support_id": "support:json-suffix-structured",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-suffix-syntax",
+      "support_id": "support:json-suffix-syntax",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        },
+        {
+          "source_id": "source:rfc6839",
+          "start": 6138,
+          "end": 6469,
+          "sha256": "fb47739328fc62e8b5fb1098c736795f50fd1c63a7156ffbd6f748a8e1b6ce81"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:not-media-complement",
+      "support_id": "support:not-media-complement",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 594,
+          "end": 645,
+          "sha256": "413602f209caeca06fab7dbe0f60238eff62d54b3b96fb8494641269391b35a0"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:not-registered-application-complement",
+      "support_id": "support:not-registered-application-complement",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 428,
+          "end": 521,
+          "sha256": "de47c770f3888f6a7cfbad45f882083fdbf47b1ae1a1d128d12add6b2c41d04f"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:not-registered-complement",
+      "support_id": "support:not-registered-complement",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 522,
+          "end": 593,
+          "sha256": "78424a575220c8f7da3a73586479317a91a18bf6ea55f814312a8926d48fd920"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:problem-has-json-suffix",
+      "support_id": "support:problem-has-json-suffix",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 21490,
+          "end": 21539,
+          "sha256": "b9e87e4abb1716b8a5c652915dce55b696ae3844c67fb39f605bfc5ead936739"
+        },
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        },
+        {
+          "source_id": "source:rfc6838",
+          "start": 20519,
+          "end": 20690,
+          "sha256": "bd96a0b7ec847aa501d816c1380941f929710d1bfb51dfeaae97cbcbfef55b3e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:problem-registered-application",
+      "support_id": "support:problem-registered-application",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 21490,
+          "end": 21539,
+          "sha256": "b9e87e4abb1716b8a5c652915dce55b696ae3844c67fb39f605bfc5ead936739"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:registered-application-subclass-application",
+      "support_id": "support:registered-application-subclass-application",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 230,
+          "end": 309,
+          "sha256": "5721d6f6953bb4c9964e40d5b78760a45fe07c630151e803f15ec19f4f2c948b"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:registered-application-subclass-registered",
+      "support_id": "support:registered-application-subclass-registered",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 151,
+          "end": 229,
+          "sha256": "f2a8b50f31c5b49926f05f5b1cfb78292f1c51fb630d05965dc9db1b5cbc3b57"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:registered-subclass-media",
+      "support_id": "support:registered-subclass-media",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 310,
+          "end": 367,
+          "sha256": "5264c167e59994c80f9f5a6665a38ce33bb6db4bca99125d53635861a9868eb8"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:syntax-property-chain",
+      "support_id": "support:syntax-property-chain",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        },
+        {
+          "source_id": "source:rfc6839",
+          "start": 6138,
+          "end": 6469,
+          "sha256": "fb47739328fc62e8b5fb1098c736795f50fd1c63a7156ffbd6f748a8e1b6ce81"
+        },
+        {
+          "source_id": "source:vocabulary",
+          "start": 647,
+          "end": 738,
+          "sha256": "2d3ddf10d395b458f74327f8672ea0f001cf7865ff3e25d042797ac5d779114f"
+        }
+      ]
+    }
+  ]
+}

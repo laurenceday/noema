@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://noema.invalid/schemas/release.schema.json",
+  "title": "Noema sealed release",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "release_id",
+    "backend",
+    "sources",
+    "claims",
+    "rules",
+    "queries",
+    "claim_maps",
+    "digest"
+  ],
+  "properties": {
+    "format_version": { "const": 1 },
+    "release_id": { "$ref": "#/$defs/identifier" },
+    "backend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "semantic_profile",
+        "world_assumption",
+        "unique_name_assumption",
+        "negation",
+        "monotonic",
+        "datatype_policy",
+        "inconsistency_policy",
+        "max_proof_nodes",
+        "max_proof_depth"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "semantic_profile": { "type": "string", "minLength": 1 },
+        "world_assumption": { "enum": ["open", "closed"] },
+        "unique_name_assumption": { "type": "boolean" },
+        "negation": { "type": "string", "minLength": 1 },
+        "monotonic": { "type": "boolean" },
+        "datatype_policy": { "type": "string", "minLength": 1 },
+        "inconsistency_policy": { "type": "string", "minLength": 1 },
+        "max_proof_nodes": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "max_proof_depth": { "type": "integer", "minimum": 1, "maximum": 256 }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "path", "media_type", "license", "sha256", "byte_length"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "path": { "type": "string", "minLength": 1 },
+          "media_type": { "type": "string", "minLength": 1 },
+          "license": { "type": "string", "minLength": 1 },
+          "sha256": { "$ref": "#/$defs/digest" },
+          "byte_length": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "expression", "asserted"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "expression": { "type": "string", "minLength": 1 },
+          "asserted": { "type": "boolean" }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "premises", "conclusion"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "premises": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/identifier" }
+          },
+          "conclusion": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "positive_claim_id", "complement_claim_id"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "positive_claim_id": { "$ref": "#/$defs/identifier" },
+          "complement_claim_id": {
+            "oneOf": [
+              { "$ref": "#/$defs/identifier" },
+              { "type": "null" }
+            ]
+          }
+        }
+      }
+    },
+    "claim_maps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "support_id", "spans"],
+        "properties": {
+          "claim_id": { "$ref": "#/$defs/identifier" },
+          "support_id": { "$ref": "#/$defs/identifier" },
+          "spans": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source_id", "start", "end", "sha256"],
+              "properties": {
+                "source_id": { "$ref": "#/$defs/identifier" },
+                "start": { "type": "integer", "minimum": 0 },
+                "end": { "type": "integer", "minimum": 1 },
+                "sha256": { "$ref": "#/$defs/digest" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "digest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+#-]{0,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

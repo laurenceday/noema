@@ -1,0 +1,88 @@
+{
+  "schema": "noema.questions/v1",
+  "release_id": "release:iana-media-types-2026-08-14",
+  "entities": [
+    {
+      "id": "entity:application-json",
+      "aliases": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "entity:candidate-json",
+      "aliases": [
+        "application/unknown+json",
+        "json media type"
+      ]
+    },
+    {
+      "id": "entity:problem-json",
+      "aliases": [
+        "application/problem+json",
+        "json media type"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "id": "template:has-json-suffix",
+      "pattern": "does {entity} have the +json structured suffix?",
+      "operator": "all",
+      "outcome": "query",
+      "reason_code": null,
+      "bindings": [
+        {
+          "entity_id": "entity:application-json",
+          "query_ids": [
+            "query:application-json-has-json-suffix"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "template:payload-safe",
+      "pattern": "is {entity} safe to process?",
+      "operator": null,
+      "outcome": "unsupported",
+      "reason_code": "question:out-of-profile",
+      "bindings": []
+    },
+    {
+      "id": "template:registered-application",
+      "pattern": "is {entity} a registered application media type?",
+      "operator": "all",
+      "outcome": "query",
+      "reason_code": null,
+      "bindings": [
+        {
+          "entity_id": "entity:candidate-json",
+          "query_ids": [
+            "query:candidate-registered-application"
+          ]
+        },
+        {
+          "entity_id": "entity:problem-json",
+          "query_ids": [
+            "query:problem-registered-application"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "template:registered-json-syntax",
+      "pattern": "is {entity} a registered media type whose representation follows json syntax?",
+      "operator": "all",
+      "outcome": "query",
+      "reason_code": null,
+      "bindings": [
+        {
+          "entity_id": "entity:problem-json",
+          "query_ids": [
+            "query:problem-json-syntax",
+            "query:problem-registered"
+          ]
+        }
+      ]
+    }
+  ]
+}

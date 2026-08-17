@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://noema.invalid/schemas/judgement.schema.json",
+  "title": "Noema typed judgement",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "query_id",
+    "release_digest",
+    "conclusion_claim_ids",
+    "proof_root_node_ids",
+    "reason_code"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "entailed",
+        "contradicted",
+        "both",
+        "unknown",
+        "ambiguous",
+        "unsupported",
+        "inconsistent_release",
+        "budget_exceeded",
+        "error"
+      ]
+    },
+    "query_id": { "$ref": "#/$defs/identifier" },
+    "release_digest": { "$ref": "#/$defs/digest" },
+    "conclusion_claim_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "proof_root_node_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "reason_code": {
+      "oneOf": [
+        { "$ref": "#/$defs/identifier" },
+        { "type": "null" }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "enum": ["entailed", "contradicted"] } } },
+      "then": {
+        "properties": {
+          "conclusion_claim_ids": { "minItems": 1, "maxItems": 1 },
+          "proof_root_node_ids": { "minItems": 1, "maxItems": 1 },
+          "reason_code": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "both" } } },
+      "then": {
+        "properties": {
+          "conclusion_claim_ids": { "minItems": 2, "maxItems": 2 },
+          "proof_root_node_ids": { "minItems": 2, "maxItems": 2 },
+          "reason_code": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "unknown",
+              "ambiguous",
+              "unsupported",
+              "inconsistent_release",
+              "budget_exceeded",
+              "error"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "conclusion_claim_ids": { "maxItems": 0 },
+          "proof_root_node_ids": { "maxItems": 0 },
+          "reason_code": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+#-]{0,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}
