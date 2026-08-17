@@ -60,3 +60,25 @@ Checks performed:
 | -- | -- | -- | No new findings | closed |
 
 Round 2 closes cleanly. The exact-ground replayer remains a synthetic test calculus; the IANA OWL adapter and its separate semantic verifier belong to Step 3.
+
+## Step 3, round 1 -- 2026-08-17
+
+The recorded Solidity security suite remains waived. This round reviewed the full `17bcee7c51e2bec2c0aaf33fba6ce0665051400b...d706bbd17bb72840f757266fd5e00615e0db7bff` diff: the pinned IANA/RFC source release, the bounded OWL 2 RL adapter, proof production and replay, exact evidence projection, and the subject mutation fixtures.
+
+Checks performed:
+
+- Ran all 112 tests with locked, offline uv and with the runbook command inside the activated environment; both runs passed. The adapter subset contains 44 direct, multi-hop, contradiction, unknown, refusal, conflict, provenance, profile, and mutation cases.
+- Ran pip-audit 2.10.1 over the locked runtime dependencies; it reported no known vulnerabilities.
+- Recomputed every vendored source digest, rebuilt the two IANA JSON slices from the raw CSV parents without a network request, and matched the RFC 8259 file to the RFC Editor bytes.
+- Replayed every declared query, verified each proof-bearing judgement independently, and projected its evidence back to exact raw source spans.
+- Exercised trust-anchor failure, undeclared graph semantics, invalid complement pairs, profile escapes, malformed expressions, asserted and derived inconsistency, stale source bytes, missing evidence, changed rules and premises, and alternate-proof root substitution.
+- Confirmed SHACL runs without inference or imports, runtime validation opens no network socket, and production code contains no shell execution, dynamic evaluation, or unsafe deserialisation path.
+- Compiled `src/` and `tests/`, checked the full diff, scanned for credential material, verified both implementation commits carry the required provenance trailers, and ran `git fsck`.
+
+The implementation already contained the corrections identified during its pre-receipt review. This independent round found no further defect.
+
+| id | severity | file | finding | status |
+| --- | --- | --- | --- | --- |
+| -- | -- | -- | No findings | closed |
+
+Leads not pursued: full OWL 2 RL conformance, automatic live-registry refresh, and independent authentication of SME modelling choices are outside the declared prototype. The adapter rejects unadvertised OWL constructs and uses only its pinned, offline release.
