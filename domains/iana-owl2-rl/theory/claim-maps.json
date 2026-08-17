@@ -1,0 +1,215 @@
+{
+  "schema": "noema.claim-maps/v1",
+  "claim_maps": [
+    {
+      "claim_id": "claim:application-json-lacks-json-suffix",
+      "support_id": "support:application-json-lacks-json-suffix",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 14360,
+          "end": 14393,
+          "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        },
+        {
+          "source_id": "source:rfc6838",
+          "start": 19577,
+          "end": 19717,
+          "sha256": "4e17f45e63f9d743e6db79ed3aac3d5ad5cf40e04686b3018708224bc5a9e7e9"
+        },
+        {
+          "source_id": "source:rfc6838",
+          "start": 20519,
+          "end": 20690,
+          "sha256": "bd96a0b7ec847aa501d816c1380941f929710d1bfb51dfeaae97cbcbfef55b3e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:application-json-registered-application",
+      "support_id": "support:application-json-registered-application",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 14360,
+          "end": 14393,
+          "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:application-json-uses-json-syntax",
+      "support_id": "support:application-json-uses-json-syntax",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 14360,
+          "end": 14393,
+          "sha256": "dc58351e228c94637405c7d60005a3470a70dc1672086dcbe6e8cea05ddb3703"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:application-subclass-media",
+      "support_id": "support:application-subclass-media",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 368,
+          "end": 426,
+          "sha256": "f9bb9cb9a6a61804c40a3235fd2382b6ae94b1f186723b4245948a6962d79523"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:json-suffix-syntax",
+      "support_id": "support:json-suffix-syntax",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        },
+        {
+          "source_id": "source:rfc6839",
+          "start": 6138,
+          "end": 6469,
+          "sha256": "fb47739328fc62e8b5fb1098c736795f50fd1c63a7156ffbd6f748a8e1b6ce81"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:not-media-complement",
+      "support_id": "support:not-media-complement",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 594,
+          "end": 645,
+          "sha256": "413602f209caeca06fab7dbe0f60238eff62d54b3b96fb8494641269391b35a0"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:not-registered-application-complement",
+      "support_id": "support:not-registered-application-complement",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 428,
+          "end": 521,
+          "sha256": "de47c770f3888f6a7cfbad45f882083fdbf47b1ae1a1d128d12add6b2c41d04f"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:not-registered-complement",
+      "support_id": "support:not-registered-complement",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 522,
+          "end": 593,
+          "sha256": "78424a575220c8f7da3a73586479317a91a18bf6ea55f814312a8926d48fd920"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:problem-has-json-suffix",
+      "support_id": "support:problem-has-json-suffix",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 21490,
+          "end": 21539,
+          "sha256": "b9e87e4abb1716b8a5c652915dce55b696ae3844c67fb39f605bfc5ead936739"
+        },
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        },
+        {
+          "source_id": "source:rfc6838",
+          "start": 20519,
+          "end": 20690,
+          "sha256": "bd96a0b7ec847aa501d816c1380941f929710d1bfb51dfeaae97cbcbfef55b3e"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:problem-registered-application",
+      "support_id": "support:problem-registered-application",
+      "spans": [
+        {
+          "source_id": "source:iana-application-csv",
+          "start": 21490,
+          "end": 21539,
+          "sha256": "b9e87e4abb1716b8a5c652915dce55b696ae3844c67fb39f605bfc5ead936739"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:registered-application-subclass-application",
+      "support_id": "support:registered-application-subclass-application",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 230,
+          "end": 309,
+          "sha256": "5721d6f6953bb4c9964e40d5b78760a45fe07c630151e803f15ec19f4f2c948b"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:registered-application-subclass-registered",
+      "support_id": "support:registered-application-subclass-registered",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 151,
+          "end": 229,
+          "sha256": "f2a8b50f31c5b49926f05f5b1cfb78292f1c51fb630d05965dc9db1b5cbc3b57"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:registered-subclass-media",
+      "support_id": "support:registered-subclass-media",
+      "spans": [
+        {
+          "source_id": "source:vocabulary",
+          "start": 310,
+          "end": 367,
+          "sha256": "5264c167e59994c80f9f5a6665a38ce33bb6db4bca99125d53635861a9868eb8"
+        }
+      ]
+    },
+    {
+      "claim_id": "claim:syntax-property-chain",
+      "support_id": "support:syntax-property-chain",
+      "spans": [
+        {
+          "source_id": "source:iana-suffix-csv",
+          "start": 2290,
+          "end": 3405,
+          "sha256": "dae36c8714cb79402b889a137a84269487e204550027c9596795dddf3b240e5e"
+        },
+        {
+          "source_id": "source:rfc6839",
+          "start": 6138,
+          "end": 6469,
+          "sha256": "fb47739328fc62e8b5fb1098c736795f50fd1c63a7156ffbd6f748a8e1b6ce81"
+        },
+        {
+          "source_id": "source:vocabulary",
+          "start": 647,
+          "end": 738,
+          "sha256": "2d3ddf10d395b458f74327f8672ea0f001cf7865ff3e25d042797ac5d779114f"
+        }
+      ]
+    }
+  ]
+}

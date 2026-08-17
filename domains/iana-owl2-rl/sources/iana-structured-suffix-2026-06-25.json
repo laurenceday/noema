@@ -1,0 +1,26 @@
+{
+  "schema": "noema.iana.structured-suffix.slice/v1",
+  "generated_from": {
+    "path": "iana-structured-syntax-suffix-2026-06-25.csv",
+    "url": "https://www.iana.org/assignments/media-type-structured-suffix/structured-syntax-suffix.csv",
+    "registry_id": "media-type-structured-suffix",
+    "registry_updated": "2026-06-25",
+    "retrieved_at": "2026-08-17",
+    "sha256": "8f67c993b42ca7027dbcf108d831a8b38d38485c941efd72c8099585420547bf",
+    "selector": "+json"
+  },
+  "license": {
+    "id": "CC0-1.0",
+    "url": "https://www.iana.org/help/licensing-terms"
+  },
+  "record": {
+    "name": "JavaScript Object Notation (JSON)",
+    "suffix": "+json",
+    "references": [
+      "RFC8259",
+      "RFC6839"
+    ],
+    "encoding": "JSON is encoded using UTF-8, and is binary data. See [RFC8259, Section 8.1] for additional encoding considerations.",
+    "registered": "2012-11-27"
+  }
+}

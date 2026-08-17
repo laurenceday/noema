@@ -1,0 +1,14 @@
+@prefix iana: <https://noema.invalid/iana/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+iana:RegisteredApplicationMediaType rdfs:subClassOf iana:RegisteredMediaType .
+iana:RegisteredApplicationMediaType rdfs:subClassOf iana:ApplicationMediaType .
+iana:RegisteredMediaType rdfs:subClassOf iana:MediaType .
+iana:ApplicationMediaType rdfs:subClassOf iana:MediaType .
+
+iana:NotRegisteredApplicationMediaType owl:complementOf iana:RegisteredApplicationMediaType .
+iana:NotRegisteredMediaType owl:complementOf iana:RegisteredMediaType .
+iana:NotMediaType owl:complementOf iana:MediaType .
+
+iana:usesRepresentationSyntax owl:propertyChainAxiom ( iana:hasSuffix iana:suffixSyntax ) .

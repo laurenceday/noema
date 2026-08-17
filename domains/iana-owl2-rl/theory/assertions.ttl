@@ -1,0 +1,27 @@
+@prefix iana: <https://noema.invalid/iana/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<https://noema.invalid/iana/media/application_problem_json>
+    a iana:RegisteredApplicationMediaType ;
+    iana:mediaTypeName "application/problem+json" ;
+    iana:hasSuffix <https://noema.invalid/iana/suffix/json> .
+
+<https://noema.invalid/iana/media/application_json>
+    a iana:RegisteredApplicationMediaType ;
+    iana:mediaTypeName "application/json" ;
+    iana:usesRepresentationSyntax <https://noema.invalid/iana/syntax/json> .
+
+[]
+    a owl:NegativePropertyAssertion ;
+    owl:sourceIndividual <https://noema.invalid/iana/media/application_json> ;
+    owl:assertionProperty iana:hasSuffix ;
+    owl:targetIndividual <https://noema.invalid/iana/suffix/json> .
+
+<https://noema.invalid/iana/suffix/json>
+    a iana:StructuredSyntaxSuffix ;
+    iana:suffixName "+json" ;
+    iana:suffixSyntax <https://noema.invalid/iana/syntax/json> .
+
+<https://noema.invalid/iana/syntax/json>
+    a iana:RepresentationSyntax ;
+    iana:syntaxName "JSON" .
