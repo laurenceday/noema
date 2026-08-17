@@ -42,3 +42,21 @@ Checks performed:
 | N-205 | medium | `src/noema/model.py`, `src/noema/release.py` | The release digest bound only an opaque semantic-profile string, not the open/closed-world, unique-name, negation, monotonicity, datatype, or inconsistency assumptions. | Added structured, mandatory semantic declarations to the backend contract and release schema; assumption changes now miss the trusted digest. |
 
 All five findings were corrected on the stacked audit branch. Round 2 must verify the fixes and the expanded suite before closure.
+
+## Step 2, round 2 -- 2026-08-17
+
+Round 2 reviewed `a604c9d` and repeated the complete Step 2 audit after the fixes.
+
+Checks performed:
+
+- Ran all 68 tests with the system Python entry command and locked, offline uv; both runs passed.
+- Replayed all four round-1 demonstrations. Query transplantation and non-Boolean adapter results were rejected, adapter exceptions retained no private canary or exception context, and deep JSON returned `CanonicalizationError`.
+- Confirmed that changing a query signature or a structured semantic assumption misses the trusted release digest.
+- Re-ran pip-audit 2.10.1 over all eight locked third-party packages; it reported no known vulnerabilities.
+- Recompiled `src/` and `tests/`, checked the complete fixes diff, and repeated the production search for network, subprocess, dynamic evaluation, and unsafe deserialisation paths. None are present.
+
+| id | severity | file | finding | status |
+| --- | --- | --- | --- | --- |
+| -- | -- | -- | No new findings | closed |
+
+Round 2 closes cleanly. The exact-ground replayer remains a synthetic test calculus; the IANA OWL adapter and its separate semantic verifier belong to Step 3.
