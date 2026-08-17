@@ -16,6 +16,13 @@
   },
   "sources": [
     {
+      "id": "source:evals",
+      "path": "evals.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "983668fa6349e0823fd491342650adbd840cfffa75996c6d2d3f729ca64cc0c8"
+    },
+    {
       "id": "source:iana-application-csv",
       "path": "sources/iana-application-2026-08-14.csv",
       "media_type": "text/csv",
@@ -42,6 +49,13 @@
       "media_type": "application/json",
       "license": "CC0-1.0",
       "sha256": "6fc7502bda3fd3196f7da3cde63a0d60e611fdc6e915ade40bb9ff53efc5dae5"
+    },
+    {
+      "id": "source:questions",
+      "path": "questions.json",
+      "media_type": "application/json",
+      "license": "Apache-2.0",
+      "sha256": "cf8eaeb32a2c0ff7bc5c00fa0e408ebca23607c29439c19e8f4f750c4f2d4f10"
     },
     {
       "id": "source:rfc6838",

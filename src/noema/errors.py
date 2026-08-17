@@ -23,3 +23,15 @@ class ProofVerificationError(NoemaError):
 
 class EvidenceProjectionError(NoemaError):
     """Verified proof leaves cannot be mapped to exact evidence."""
+
+
+class QuestionMappingError(NoemaError):
+    """A deterministic question catalogue or mapping is malformed."""
+
+
+class AnswerVerificationError(NoemaError):
+    """An answer certificate cannot be independently reconstructed."""
+
+
+class ProbeValidationError(NoemaError):
+    """A Null-prime evaluation or hypothetical mutation is malformed."""

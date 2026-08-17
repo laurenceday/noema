@@ -50,7 +50,7 @@ from noema.release import build_release, validate_release
 SEMANTIC_PROFILE = "owl2-rl-noema/v1"
 BACKEND_ID = "backend:iana-owl2-rl-fragment"
 DEFAULT_TRUSTED_RELEASE_DIGEST = (
-    "f35adb674b1dc026435f22b03a8a2f4c9ac7d4dbe61978640c7a9c206d919330"
+    "7eaf104e41f2fdf0d1a1dc005f5c881fd813bbd2055d7425acae9d4d22fd207e"
 )
 NODE_HASH_DOMAIN = "noema:iana-owl2-rl-node:v1"
 IANA = "https://noema.invalid/iana/"
