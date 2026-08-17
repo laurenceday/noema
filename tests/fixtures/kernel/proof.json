@@ -1,0 +1,34 @@
+{
+  "release_digest": "2fbe89eca2d3ccebd356cba8126c8c6ac43b82fcd1d77afa75a03eb0fd1026f2",
+  "root_node_ids": ["node:serializable"],
+  "nodes": [
+    {
+      "id": "node:registered",
+      "kind": "assertion",
+      "claim_id": "claim:registered",
+      "rule_id": null,
+      "premise_node_ids": []
+    },
+    {
+      "id": "node:suffix",
+      "kind": "assertion",
+      "claim_id": "claim:suffix",
+      "rule_id": null,
+      "premise_node_ids": []
+    },
+    {
+      "id": "node:json-syntax",
+      "kind": "rule",
+      "claim_id": "claim:json-syntax",
+      "rule_id": "rule:suffix-syntax",
+      "premise_node_ids": ["node:registered", "node:suffix"]
+    },
+    {
+      "id": "node:serializable",
+      "kind": "rule",
+      "claim_id": "claim:serializable",
+      "rule_id": "rule:json-serializable",
+      "premise_node_ids": ["node:json-syntax"]
+    }
+  ]
+}
