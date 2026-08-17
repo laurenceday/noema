@@ -63,7 +63,7 @@ Round 2 closes cleanly. The exact-ground replayer remains a synthetic test calcu
 
 ## Step 3, round 1 -- 2026-08-17
 
-The recorded Solidity security suite remains waived. This round reviewed the full `17bcee7c51e2bec2c0aaf33fba6ce0665051400b...d706bbd17bb72840f757266fd5e00615e0db7bff` diff: the pinned IANA/RFC source release, the bounded OWL 2 RL adapter, proof production and replay, exact evidence projection, and the subject mutation fixtures.
+The recorded Solidity security suite remains waived. This round reviewed the full `17bcee7c51e2bec2c0aaf33fba6ce0665051400b...d706bbd17bb72840f757266fd5e00615e0db7bff` diff. The review covered the pinned IANA/RFC source release, the bounded OWL 2 RL adapter, proof production and replay, exact evidence projection, and the subject mutation fixtures.
 
 Checks performed:
 
@@ -75,7 +75,7 @@ Checks performed:
 - Confirmed SHACL runs without inference or imports, runtime validation opens no network socket, and production code contains no shell execution, dynamic evaluation, or unsafe deserialisation path.
 - Compiled `src/` and `tests/`, checked the full diff, scanned for credential material, verified both implementation commits carry the required provenance trailers, and ran `git fsck`.
 
-The implementation already contained the corrections identified during its pre-receipt review. This independent round found no further defect.
+The implementation already contained the corrections found during its pre-receipt review. This independent round found no further defect.
 
 | id | severity | file | finding | status |
 | --- | --- | --- | --- | --- |

@@ -1,14 +1,14 @@
 # IANA media types with a bounded OWL 2 RL adapter
 
-This release models a small, byte-pinned part of the IANA Media Types and
+This release contains a small, byte-pinned part of the IANA Media Types and
 Structured Syntax Suffix registries. It covers `application/json`,
-`application/problem+json`, the `+json` suffix, and one deliberately unresolved
-registry candidate. The release digest is
+`application/problem+json`, and the `+json` suffix. One registry candidate is
+deliberately unresolved. The release digest is
 `f35adb674b1dc026435f22b03a8a2f4c9ac7d4dbe61978640c7a9c206d919330`.
 
 The official `application` registry CSV, structured-suffix CSV, RFC 6838, RFC
-6839, and RFC 8259 are stored under `sources/` with their original bytes. The
-two small JSON views can be checked offline with:
+6839, and RFC 8259 are stored under `sources/` with their original bytes. Check
+the two small JSON views offline with:
 
 ```sh
 python3 domains/iana-owl2-rl/sources/extract_iana_slices.py --check
@@ -28,22 +28,22 @@ only two grounded OWL 2 RL rule families:
 - `cax-sco`: RDF type propagation across one `rdfs:subClassOf` axiom.
 - `prp-spo2`: one `owl:propertyChainAxiom` containing exactly two properties.
 
-The release uses open-world semantics, no unique-name assumption, no datatype
-entailment, explicit OWL class complements and negative property assertions,
-and release-fatal formal inconsistency. Query pairs are validated as exact
-class or property complements before reasoning. Semantic graph triples must
-also have matching asserted formal claims; only label and OWL/RDF collection
-scaffolding are exempt.
+The release uses open-world semantics and makes no unique-name assumption. It
+has no datatype entailment, uses explicit OWL class complements and negative
+property assertions, and treats formal inconsistency as fatal. Query pairs are
+validated as exact class or property complements before reasoning. Semantic
+graph triples must also have matching asserted formal claims. Only label
+triples and OWL/RDF collection triples are exempt.
 
-The class `RegisteredApplicationMediaType` is the curated intersection-like
-slice for a registered entry in the IANA `application` tree. It is a subclass
-of both `RegisteredMediaType` and `ApplicationMediaType`; the release does not
-claim that every registered media type belongs to the `application` tree.
+The curated class `RegisteredApplicationMediaType` covers entries that are
+both registered and in IANA's `application` tree. It is a subclass of both
+`RegisteredMediaType` and `ApplicationMediaType`; the release does not claim
+that every registered media type belongs to the `application` tree.
 
 SHACL runs over the asserted graph with inference disabled. OWL-RL then
-materialises a separate copy as a differential reference check. RDFLib,
-OWL-RL, and pySHACL parse, materialise, and validate, but do not provide
-Noema's replayable proof contract. The adapter constructs the proof DAG and
+materialises a separate copy for comparison. RDFLib, OWL-RL, and pySHACL
+parse, materialise, and validate the graph. They do not provide Noema's
+replayable proof contract. The adapter constructs the proof DAG and
 independently replays every grounded rule.
 
 ## Boundaries
