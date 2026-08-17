@@ -85,7 +85,7 @@ Leads not pursued: full OWL 2 RL conformance, automatic live-registry refresh, a
 
 ## Step 4, round 1 -- 2026-08-17
 
-The recorded Solidity security suite remains waived. This round reviewed the full `bf92cb788582b2e2c69f1cf5a65df1a1b9e7ec62...27f6e8c1810fe62b4a4ca28c1bf9349547e235b4` diff. The review covered deterministic question mapping, compound answers, proofless and proof-bearing verification, evidence and rendering integrity, trust direction, transient-question privacy, Null-prime simulation, CLI handling, and the offline demo.
+This repository has no Solidity, so the Solidity security suite remains waived. This round reviewed the full `bf92cb788582b2e2c69f1cf5a65df1a1b9e7ec62...27f6e8c1810fe62b4a4ca28c1bf9349547e235b4` diff. The review covered deterministic question mapping, compound answers, proofless and proof-bearing verification, evidence and rendering integrity, trust direction, transient-question privacy, Null-prime simulation, CLI handling, and the offline demo.
 
 Checks performed:
 
